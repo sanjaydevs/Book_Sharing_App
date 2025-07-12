@@ -1,0 +1,9 @@
+# Ignore server and client node_modules
+client/node_modules/
+server/node_modules/
+
+# Ignore environment files
+*.env
+
+# macOS
+.DS_Store
