@@ -3,6 +3,8 @@ import pool from "../db.js"
 import jwt from "jsonwebtoken";
 import bcrypt from "bcryptjs";
 
+import verifyToken from "../middleware/verifyToken.js";
+
 const router= express.Router();
 
 router.post("/register", async (req,res)=>{
@@ -31,7 +33,7 @@ router.post("/register", async (req,res)=>{
             token
         })
     } catch (err){
-        console.error("Register error:", err.message);
+        console.error("Register error:", err);
         res.status(500).json({error:"Server Error"});
     }
 });
@@ -68,5 +70,14 @@ router.post("/login", async (req,res)=>{
         res.status(500).json({error:"Server Error"});
     }
 });
+
+router.post("/me",verifyToken, async (req,res)=>{
+    try{
+        const userResult = await pool.query("SELECT id,name,email FROM users WHERE id = $1",[req.user.userId]);
+        res.json({user : userResult.rows[0]});
+    } catch(err) {
+        res.status(500).json({error: "Server error"})
+    }
+})
 
 export default router
