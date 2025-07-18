@@ -38,4 +38,17 @@ router.post("/add", verifyToken, async (req, res) => {
     }
 });
 
+
+router.get("/me", verifyToken, async (req, res) => {
+    const userId=req.user.userId;
+
+    try{
+        const result = await pool.query("SELECT id,title,author FROM books WHERE owner_id = $1",[userId]);
+        res.json({books:result.rows})
+    } catch (err){
+        console.log("Fetch Books Error", err.message);
+        res.status(500).json({error:"Server Error"});
+    }
+});
+
 export default router;
