@@ -19,4 +19,4 @@ const verifyToken=(req,res,next)=>{
     }
 };
 
-export default verifytoken;
+export default verifyToken;
