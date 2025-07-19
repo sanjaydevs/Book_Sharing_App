@@ -1,8 +1,13 @@
-export default function Dashboard() {
-  return (
-    <div className="flex flex-col items-center justify-center h-screen">
-      <h1 className="text-4xl font-bold text-blue-600">Dashboard</h1>
-      <p className="mt-4 text-lg text-gray-700">Manage your books and profile here.</p>
-    </div>
-  );
+import React,{useState} from "react";
+import axios from "axios";
+
+const Dashboard=()=>{
+  const [myBooks, setMyBooks] = useState([]);
+  const token = localStorage.getItem("token");
+
+  
+
+
+
 }
+export default Dashboard;
