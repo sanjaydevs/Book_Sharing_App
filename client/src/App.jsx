@@ -6,11 +6,15 @@ import Register from "./pages/register";
 import Login from "./pages/login";
 import Dashboard from "./pages/dashboard";
 import AddBook from "./pages/addBook";
+import Navbar from "./components/navbar";
 
 function App() {
   return (
+    
     <Router>
+    <Navbar />
       <Routes>
+
         <Route path="/" element={<Home />} />
         <Route path="/browse" element={<Browse />} />
         <Route path="/register" element={<Register />} />
