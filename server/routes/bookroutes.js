@@ -12,7 +12,7 @@ router.get("/search", async (req, res) => {
     }
 
     try {
-        const result = await pool.query("Select books.id, books.title, books.author, users.name AS owner_name, users.email AS owner_email FROM books JOIN users ON books.owner_id = users.id WHERE books.title ILIKE $1", [`%${title}%`]);
+        const result = await pool.query("Select books.id, books.title, books.author,books.image, users.name AS owner_name, users.email AS owner_email FROM books JOIN users ON books.owner_id = users.id WHERE books.title ILIKE $1", [`%${title}%`]);
 
         res.json(result.rows);
     } catch (err) {
@@ -22,7 +22,7 @@ router.get("/search", async (req, res) => {
 });
 
 router.post("/add", verifyToken, async (req, res) => {
-    const {title,author} =req.body
+    const {title,author,image} =req.body
     const userId= req.user.userId;
 
     if (!title || !author) {
@@ -30,7 +30,7 @@ router.post("/add", verifyToken, async (req, res) => {
     }
 
     try{
-        const result = await pool.query("INSERT INTO books (title, author, owner_id) VALUES ($1, $2, $3) RETURNING *",[title,author,userId]);
+        const result = await pool.query("INSERT INTO books (title, author, owner_id,image) VALUES ($1, $2, $3,$4) RETURNING *",[title,author,userId,image]);
         res.status(201).json({book:result.rows[0]});
     } catch(err){
         console.error("Add book error:", err.message);
