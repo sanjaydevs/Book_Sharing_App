@@ -1,55 +1,40 @@
-import React, { useState } from "react";
-
-const books = [
-  {
-    title: "Atomic Habits",
-    author: "James Clear",
-    image: "https://images-na.ssl-images-amazon.com/images/I/91bYsX41DVL.jpg",
-    available: true,
-    owner_name: "Sanjay"
-  },
-  {
-    title: "The Alchemist",
-    author: "Paulo Coelho",
-    image: "https://images-na.ssl-images-amazon.com/images/I/71aFt4+OTOL.jpg",
-    available: true,
-    owner_name: "Ravi"
-  },
-  {
-    title: "Clean Code",
-    author: "Robert C. Martin",
-    image: "https://m.media-amazon.com/images/I/51E2055ZGUL._UF1000,1000_QL80_.jpg",
-    available: false,
-    owner_name: "Sanjay"
-  },
-  {
-    title: "Sapiens",
-    author: "Yuval Noah Harari",
-    image: "https://images-na.ssl-images-amazon.com/images/I/713jIoMO3UL.jpg",
-    available: true,
-    owner_name: "Aisha"
-  },
-  {
-    title: "Zero to One",
-    author: "Peter Thiel",
-    image: "https://images-na.ssl-images-amazon.com/images/I/71m-MxdJ2WL.jpg",
-    available: true,
-    owner_name: "Sanjay"
-  },
-  {
-    title: "1984",
-    author: "George Orwell",
-    image: "https://images-na.ssl-images-amazon.com/images/I/71kxa1-0mfL.jpg",
-    available: false,
-    owner_name: "Ravi"
-  }
-];
+import React, { useState ,useEffect} from "react";
+import axios from "axios";
+import {useNavigate} from "react-router-dom";
 
 
 
-const Browse = () => {
+export default function Browse () {
+  const [books, setBooks]=useState([]);
   const [inputValue, setInputValue] = useState("");
   const [searchTerm, setSearchTerm] = useState("");
+  const navigate=useNavigate();
+
+  useEffect(()=>{
+    const token = localStorage.getItem("token");
+
+    if (!token) {
+      navigate("/login");
+      alert("You need to be logged in to browse books.");
+      return;
+    }
+
+    const fetchBooks = async ()=>{
+      try{
+        const res = await axios.get("http://localhost:5000/api/books/all", {
+          headers:{
+            Authorization: `Bearer ${token}'`
+          },
+        });
+        setBooks(res.data.books);
+      } catch(err){
+        console.error("Error fetching books:", err);
+        alert("Failed to fetch books. Please try again later.");
+      }
+    };
+    fetchBooks();
+
+  },[navigate]);
 
   const filteredBooks = books.filter(
     (book) =>
@@ -119,4 +104,3 @@ const Browse = () => {
   );
 };
 
-export default Browse;
