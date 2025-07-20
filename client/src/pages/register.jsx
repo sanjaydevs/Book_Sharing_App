@@ -31,6 +31,7 @@ export default function Login() {
         try {
             const res = await axios.post("http://localhost:5000/api/auth/register", form);
             localStorage.setItem("token", res.data.token);
+            window.dispatchEvent(new Event("authChange"));
             console.log(res.data)
             alert("Registered successfully");
             navigate("/browse");
