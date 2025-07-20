@@ -23,7 +23,7 @@ export default function Browse () {
       try{
         const res = await axios.get("http://localhost:5000/api/books/all", {
           headers:{
-            Authorization: `Bearer ${token}'`
+            Authorization:`Bearer ${token}`
           },
         });
         setBooks(res.data.books);

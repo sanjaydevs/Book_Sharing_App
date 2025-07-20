@@ -3,11 +3,11 @@ import axios from "axios";
 
 export default function AddBook() {
 
-    const [form,setForm]=useState({
-        title:"",
-        author:"",
-        image:""
-    });
+        const [form,setForm]=useState({
+            title:"",
+            author:"",
+            image:""
+        });
 
     const handleChange=(e)=>{
         setForm({...form,[e.target.name]:e.target.value});
