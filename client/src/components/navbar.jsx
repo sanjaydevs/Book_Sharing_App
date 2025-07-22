@@ -34,6 +34,7 @@ const Navbar = () => {
         <Link to="/" className="text-2xl font-bold text-blue-600">
         NITC BookShare 📚
         </Link>
+        
         <div className="flex gap-4 text-gray-700 font-medium ">
         <Link to="/browse" className="hover:text-blue-600 transition">
             Browse
