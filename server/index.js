@@ -5,6 +5,7 @@ import cors from "cors";
 import dotenv from "dotenv"
 import authRoutes from "./routes/authroutes.js";
 import bookRoutes from "./routes/bookroutes.js";
+import requestRoutes from "./routes/requestroutes.js";
 
 dotenv.config();
 
@@ -15,7 +16,7 @@ app.use(express.json());
 
 app.use("/api/auth", authRoutes);
 app.use("/api/books", bookRoutes);
-app.use("api/")
+app.use("api/requests", requestRoutes);
 
 
 const PORT = process.env.PORT || 5000;
