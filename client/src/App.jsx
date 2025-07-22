@@ -7,6 +7,7 @@ import Login from "./pages/login";
 import Dashboard from "./pages/dashboard";
 import AddBook from "./pages/addBook";
 import Navbar from "./components/navbar";
+import Footer from "./components/footer";
 
 function App() {
   return (
@@ -22,6 +23,7 @@ function App() {
         <Route path="/dashboard" element={<Dashboard />} />
         <Route path="/add-book" element={<AddBook />} />
       </Routes>
+    <Footer />
     </Router>
   );
 }
