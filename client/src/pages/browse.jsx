@@ -60,7 +60,7 @@ export default function Browse () {
       alert("request sent")
 
     } catch (err){
-      console.err(err)
+      console.error(err)
       alert("Failed to send Request")
     }
   };
@@ -112,6 +112,7 @@ export default function Browse () {
                   onClick={()=>{sendRequest(book.id)}}
                   className="mt-4 w-full bg-blue-500 text-white py-2 rounded-lg hover:bg-blue-600 transition-colors duration-200"
                   disabled={book.available !== true}
+                  
                   
                 >
                   {book.available === true ? "Request" : "Unavailable"}

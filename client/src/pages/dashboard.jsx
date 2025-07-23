@@ -1,5 +1,6 @@
   import React,{useState, useEffect} from "react";
   import axios from "axios";
+  import {jwtDecode} from "jwt-decode";
 
   const Dashboard=()=>{
     const [myBooks, setMyBooks] = useState([]);
@@ -7,6 +8,13 @@
     const [incomingRequests, setIncomingRequests]=useState([]);
 
     const token = localStorage.getItem("token");
+    let userId = null;
+
+    if (token) {
+      const decoded = jwtDecode(token);
+      userId = decoded.userId;
+    }
+    
 
     const handleAccept = async (reqId)=>{
       try{
@@ -54,6 +62,22 @@
         alert("Failed to Reject Request")
       }
     };
+
+    const handleReturn = async (reqId)=>{
+      try{
+        await axios.post(`http://localhost:5000/api/requests/${reqId}/return`,
+        null,
+        {
+          headers:{Authorization:`Bearer ${token}`},
+        }
+      );
+      alert("Book Returned")
+      
+      } catch (err){
+        console.error("Error Returning Book");
+        alert("Failed to Return Book")
+      }
+    }
 
     useEffect(()=>{
       const fetchRequests = async ()=>{
@@ -107,10 +131,17 @@
             <div className="mt-3">
             <button
               onClick={() => handleDelete(req.id)}
-              className="self-start  px-4 py-1 text-sm bg-green-600 text-white rounded-lg hover:bg-green-700 transition"
+              className="self-start px-4 py-1 text-sm bg-green-600 text-white rounded-lg hover:bg-green-700 transition"
             >
               Delete
             </button>
+            {req.status=='accepted' && req.requester_id==userId && (
+              <button
+              onClick={()=>handleReturn(req.id)}
+              className="self-start px-4 py-1 text-sm bg-green-600 text-white rounded-lg hover:bg-green-700 transition">
+                Return
+              </button>
+            )}
           </div>
           </div>
         

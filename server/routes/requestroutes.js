@@ -10,7 +10,7 @@ router.post("/:book_id", verifyToken, async (req,res)=>{
 
     try {
         console.log("Request incoming")
-        const check = await pool.query("Select * from requests where book_id = $1 and requester_id = $2", [book_id, requester_id]);
+        const check = await pool.query("Select * from requests where book_id = $1 and requester_id = $2 and status!='returned'", [book_id, requester_id]);
 
         if (check.rows.length > 0) {
             return res.status(400).json({message:"Request already sent"});
@@ -32,7 +32,7 @@ router.get("/me", verifyToken, async (req, res) => {
     const requester_id = req.user.userId;
 
     try {
-        const result = await pool.query("SELECT requests.*, books.title, books.author, books.image, users.name AS owner_name FROM requests JOIN books ON requests.book_id = books.id JOIN users ON books.owner_id = users.id WHERE requests.requester_id = $1",
+        const result = await pool.query("SELECT requests.*, books.title, books.author, books.image, users.name AS owner_name FROM requests JOIN books ON requests.book_id = books.id JOIN users ON books.owner_id = users.id WHERE requests.requester_id = $1 and requests.status !='returned'",
             [requester_id]);
         
             res.json({requests:result.rows});
@@ -46,7 +46,7 @@ router.get("/my-requests", verifyToken, async (req, res) => {
     const owner_id = req.user.userId;
 
     try {
-        const result = await pool.query("Select requests.*, books.title, books.author, books.image, users.name AS requester_name FROM requests JOIN books ON requests.book_id = books.id JOIN users ON requests.requester_id = users.id WHERE books.owner_id = $1",
+        const result = await pool.query("Select requests.*, books.title, books.author, books.image, users.name AS requester_name FROM requests JOIN books ON requests.book_id = books.id JOIN users ON requests.requester_id = users.id WHERE books.owner_id = $1 and requests.status!='returned'",
             [owner_id]);
         
         res.json({requests:result.rows});
@@ -72,7 +72,13 @@ router.post("/:request_id/accept", verifyToken, async (req, res) => {
             return res.status(403).json({error: "You are not authorized to accept this request"});
         }
 
-        await pool.query("UPDATE requests SET status='approved' WHERE id=$1", [request_id]);
+        const book_id = request.rows[0].book_id;
+
+        await pool.query("UPDATE requests SET status='accepted' WHERE id=$1", [request_id]);
+
+        await pool.query("UPDATE requests SET status = 'rejected' WHERE book_id = $1 AND id != $2 AND status = 'pending'", [book_id, request_id]);
+
+        await pool.query("UPDATE books SET available = false WHERE id = $1", [book_id]);
         
         res.json({message: "Request accepted successfully"});
     } catch (err) {
@@ -85,10 +91,7 @@ router.post("/:request_id/reject", verifyToken, async (req, res) => {
     try {
         const request_id = req.params.request_id;
 
-        await pool.query(
-        "UPDATE requests SET status='rejected' WHERE id=$1",
-        [request_id]
-    );
+        await pool.query("UPDATE requests SET status='rejected' WHERE id=$1",[request_id]);
 
         res.json({ message: "Request rejected" });
     } catch (err) {
@@ -118,4 +121,31 @@ router.delete("/:request_id", verifyToken, async (req, res) => {
     }
 });
 
+
+router.post("/:request_id/return", verifyToken, async (req,res)=>{
+    const request_id=req.params.request_id;
+    const requester_id=req.user.userId
+
+    try{
+
+        console.log("return called");
+        const result =  await pool.query("SELECT * FROM requests WHERE id=$1 and requester_id=$2",[request_id,requester_id]);
+
+        if(result.rows.length === 0){
+            return res.status(403).json({error:"Not authorized to cancel request"})
+        }
+
+        const book_id=result.rows[0].book_id
+
+        await pool.query("UPDATE books SET available = true WHERE id = $1",[book_id]);
+
+        await pool.query("UPDATE requests SET status = 'returned' WHERE id=$1",[request_id]);
+
+        res.json({message:"Book returned successfully"});
+
+    } catch (err) {
+        console.error("Return Book Error", err.message);
+        res.status(500).json({ error: "Server error" });
+    }
+})
 export default router;
