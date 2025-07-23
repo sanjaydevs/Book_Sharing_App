@@ -16,7 +16,7 @@ app.use(express.json());
 
 app.use("/api/auth", authRoutes);
 app.use("/api/books", bookRoutes);
-app.use("api/requests", requestRoutes);
+app.use("/api/requests", requestRoutes);
 
 
 const PORT = process.env.PORT || 5000;

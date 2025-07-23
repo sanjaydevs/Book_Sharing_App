@@ -9,6 +9,7 @@ router.post("/:book_id", verifyToken, async (req,res)=>{
     const requester_id = req.user.userId;
 
     try {
+        console.log("Request incoming")
         const check = await pool.query("Select * from requests where book_id = $1 and requester_id = $2", [book_id, requester_id]);
 
         if (check.rows.length > 0) {
@@ -18,6 +19,7 @@ router.post("/:book_id", verifyToken, async (req,res)=>{
         await pool.query("INSERT INTO requests (book_id,requester_id) VALUES ($1,$2)",[book_id,requester_id]);
 
         res.status(200).json({message:"Request Sent successfully"})
+
 
     } catch (err){
         console.error(err.message);
@@ -30,24 +32,24 @@ router.get("/me", verifyToken, async (req, res) => {
     const requester_id = req.user.userId;
 
     try {
-        const result = await pool.query("Select requests *, books.title, books.author, books.image from requests JOIN books on requests.book_id = books.id WHERE requester_id= $1",
+        const result = await pool.query("SELECT requests.*, books.title, books.author, books.image, users.name AS owner_name FROM requests JOIN books ON requests.book_id = books.id JOIN users ON books.owner_id = users.id WHERE requests.requester_id = $1",
             [requester_id]);
         
-            res.json(result.rows);
+            res.json({requests:result.rows});
     } catch (err){
         console.error("Fetch Requests Error", err.message);
         res.status(500).json({error:"Server Error"});
     }
 });
 
-router.get("/incoming", verifyToken, async (req, res) => {
+router.get("/my-requests", verifyToken, async (req, res) => {
     const owner_id = req.user.userId;
 
     try {
         const result = await pool.query("Select requests.*, books.title, books.author, books.image, users.name AS requester_name FROM requests JOIN books ON requests.book_id = books.id JOIN users ON requests.requester_id = users.id WHERE books.owner_id = $1",
             [owner_id]);
         
-        res.json(result.rows);
+        res.json({requests:result.rows});
     } catch (err){
         console.error("Fetch Incoming Requests Error", err.message);
         res.status(500).json({error:"Server Error"});
@@ -57,9 +59,10 @@ router.get("/incoming", verifyToken, async (req, res) => {
 router.post("/:request_id/accept", verifyToken, async (req, res) => {
     const request_id = req.params.request_id;
     const owner_id = req.user.userId;
+    console.log("Accept trying")
 
     try {
-        const request = await pool.query("SELECT * FROM requests WHERE id = $1", [request_id]);
+        const request = await pool.query(`SELECT requests.*, books.owner_id FROM requests JOIN books ON requests.book_id = books.id WHERE requests.id = $1`, [request_id]);
 
         if (request.rows.length === 0) {
             return res.status(404).json({error: "Request not found"});
@@ -97,11 +100,16 @@ router.post("/:request_id/reject", verifyToken, async (req, res) => {
 router.delete("/:request_id", verifyToken, async (req, res) => {
     try {
     const request_id = req.params.request_id;
+    const requester_id=req.user.userId
 
-        await pool.query(
-        "DELETE FROM requests WHERE id=$1 AND requester_id=$2",
-        [request_id, req.user.id]
+    const result = await pool.query(
+      "DELETE FROM requests WHERE id=$1 AND requester_id=$2 RETURNING *",
+        [request_id, requester_id]
     );
+
+    if (result.rowCount === 0) {
+        return res.status(404).json({ error: "Request not found or unauthorized" });
+    }
 
         res.json({ message: "Request cancelled" });
     } catch (err) {

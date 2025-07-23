@@ -42,6 +42,29 @@ export default function Browse () {
       book.author.toLowerCase().includes(searchTerm.toLowerCase())
   );
 
+  const sendRequest = async (bookId) =>{
+    const token= localStorage.getItem("token");
+    if (!token){
+      return alert("Please log in to Make requests")
+    }
+    try {
+      await axios.post(`http://localhost:5000/api/requests/${bookId}`,
+        {},
+        {
+        headers:{
+            Authorization: `Bearer ${token}`
+        }
+        }
+      );
+
+      alert("request sent")
+
+    } catch (err){
+      console.err(err)
+      alert("Failed to send Request")
+    }
+  };
+
   return (
     <div className="min-h-screen bg-gray-50 px-6 py-10">
       <h1 className="text-3xl font-semibold mb-6 text-center text-blue-600">
@@ -86,8 +109,10 @@ export default function Browse () {
                   {book.available===true ? "Available" : "Unavailable"}
                 </span>
                 <button
+                  onClick={()=>{sendRequest(book.id)}}
                   className="mt-4 w-full bg-blue-500 text-white py-2 rounded-lg hover:bg-blue-600 transition-colors duration-200"
                   disabled={book.available !== true}
+                  
                 >
                   {book.available === true ? "Request" : "Unavailable"}
                 </button>

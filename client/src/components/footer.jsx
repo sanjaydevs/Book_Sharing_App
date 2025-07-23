@@ -13,7 +13,7 @@ const Footer = () => {
         <FaGithub className="size-8"/>
         </Link>
         <Link to="https://www.linkedin.com/in/sanjay-s-74551a2ba/" className="hover:text-blue-600">
-        <FaLinkedin className="size-8" />
+        <FaLinkedin className="size-8 " />
         </Link>
         </div>
     </nav>
