@@ -1,6 +1,7 @@
   import React,{useState, useEffect} from "react";
   import axios from "axios";
   import {jwtDecode} from "jwt-decode";
+  import MessageBox from "../components/messageBox";
 
   const Dashboard=()=>{
     const [myBooks, setMyBooks] = useState([]);
@@ -108,7 +109,9 @@
       
     },[token]);
 
+    console.log("Incoming Requests", incomingRequests);
     return (
+      
       <div className="p-6 max-w-6xl mx-auto">
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
 
@@ -135,12 +138,24 @@
             >
               Delete
             </button>
+
+            {/* return */}
             {req.status=='accepted' && req.requester_id==userId && (
               <button
               onClick={()=>handleReturn(req.id)}
               className="self-start px-4 py-1 text-sm bg-green-600 text-white rounded-lg hover:bg-green-700 transition">
                 Return
               </button>
+            )}
+            
+            {req.status === "accepted" && req.requester_id === userId && (
+              <div className="mt-3">
+                {/* Message Component */}
+                <MessageBox
+                  userId={userId}
+                  requestId={req.id}
+                />
+              </div>
             )}
           </div>
           </div>
@@ -168,7 +183,7 @@
             <p className="py-1"><span className="font-medium">📚 Book:</span> {req.title}</p>
             <p className="py-1"><span className="font-medium">🙋 Requested By:</span> {req.requester_name}</p>
             <p className="py-1"><span className="font-medium ">📌 Status:</span> {req.status}</p>
-            <div className="mt-3 flex gap-3">
+            <div className="mt-3">
             <button
               onClick={() => handleAccept(req.id)}
               className="self-start  px-4 py-1 text-sm bg-green-600 text-white rounded-lg hover:bg-green-700 transition"
@@ -181,6 +196,16 @@
             >
               Reject
             </button>
+
+            {req.status === "accepted" && req.requester_id !== userId && (
+              <div className="mt-3">
+                {/* Message Component */}
+                <MessageBox
+                  userId={userId}
+                  requestId={req.id}
+                />
+              </div>
+            )}            
           </div>
           </div>
         ))}
