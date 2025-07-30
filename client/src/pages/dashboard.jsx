@@ -17,7 +17,24 @@
       const decoded = jwtDecode(token);
       userId = decoded.userId;
     }
-    
+    const resetReqs = async()=>{
+      const sentRes = await axios.get("http://localhost:5000/api/requests/me",
+          {headers:
+            {Authorization: `Bearer ${token}`}
+        });
+
+          
+          setRequests(sentRes.data.requests);
+
+          const incomingRes= await axios.get("http://localhost:5000/api/requests/my-requests",
+          {headers:
+            {Authorization: `Bearer ${token}` }
+          });
+          
+
+          setIncomingRequests(incomingRes.data.requests);
+    };
+
     const handleConfirmExchange = async (requestId) => {
       try {
         await axios.patch(`http://localhost:5000/api/requests/${requestId}/confirm`, 
@@ -28,20 +45,10 @@
           }
         }
         ); 
-        setIncomingRequests((prev) =>
-          prev.map((req) =>
-          req.id === requestId ? { ...req, receiver_confirmed: true } : req
-          )
-        );
+
+        await resetReqs();
         
-        setRequests((prev) =>
-          prev.map((req) =>
-          req.id === requestId ? { ...req, sender_confirmed: true } : req
-          )
-        );
-        
-        
-        alert("Exchange marked! Waiting for the other user.");
+        alert("Exchange marked");
         // optionally refresh list
       } catch (err) {
         console.error(err);
@@ -52,22 +59,19 @@
     const handleReturnConfirm = async (requestId) => {
         try {
           const token = localStorage.getItem("token");
-          const response = await axios.post(
+          await axios.post(
             `http://localhost:5000/api/requests/${requestId}/return`,
-            {},
+            null,
             { headers: { Authorization: `Bearer ${token}` } }
           );
-          console.log(response.data)
-          const updated = response.data;
+          console.log("handlereturn");
 
-          setRequests(prev =>
-            prev.map(r => r.id === requestId ? { ...r, ...updated } : r)
-          );
-          setIncomingRequests(prev =>
-            prev.map(r => r.id === requestId ? { ...r, ...updated } : r)
-          );
+          
+          setTimeout(() => {
+            alert("Return Confirmed From your side");
+            resetReqs(); // don’t await, just fire after alert
+          }, 100);
 
-          alert("Return Confirmed From your side");
         } catch (err) {
           console.error("Error confirming return:", err);
         }
@@ -81,9 +85,15 @@
           headers:{Authorization:`Bearer ${token}`},
           
         });
-        setIncomingRequests((prev) =>
-        prev.map((r) => (r.id === reqId ? { ...r, status: "accepted" } : r))
-        );
+
+        await resetReqs();
+        // const newincRes= await axios.get("http://localhost:5000/api/requests/my-requests",
+        //   {headers:
+        //     {Authorization: `Bearer ${token}` }
+        //   });
+          
+
+        // setIncomingRequests(newincRes.data.requests);
       } catch (err){
         console.error("Error Accepting Request",err)
         alert("Failed to Accept Request")
@@ -111,30 +121,16 @@
           {
           headers:{Authorization:`Bearer ${token}`},
         })
-        setIncomingRequests((prev) =>
-        prev.map((r) => (r.id === reqId ? { ...r, status: "rejected" } : r))
-        );
+
+        await resetReqs();
+        // setIncomingRequests((prev) =>
+        // prev.map((r) => (r.id === reqId ? { ...r, status: "rejected" } : r))
+        // );
       } catch (err){
         console.error("Error Rejecting Request",err)
         alert("Failed to Reject Request")
       }
     };
-
-    const handleReturn = async (reqId)=>{
-      try{
-        await axios.post(`http://localhost:5000/api/requests/${reqId}/return`,
-        null,
-        {
-          headers:{Authorization:`Bearer ${token}`},
-        }
-      );
-      alert("Book Returned")
-      
-      } catch (err){
-        console.error("Error Returning Book");
-        alert("Failed to Return Book")
-      }
-    }
 
     useEffect(()=>{
       const fetchRequests = async ()=>{
@@ -146,8 +142,6 @@
 
           
           setRequests(sentRes.data.requests);
-
-          console.log(sentRes);
 
           const incomingRes= await axios.get("http://localhost:5000/api/requests/my-requests",
           {headers:
@@ -300,7 +294,10 @@
                   {(parseInt(userId) === req.sender_id && !req.sender_returned) ||
                   (parseInt(userId) === req.receiver_id && !req.receiver_returned) ? (
                     <button
-                      onClick={() => handleReturnConfirm(req.id)}
+                      onClick={() => {
+                        console.log("button clicked");
+                        handleReturnConfirm(req.id)
+                      }}
                       className="px-4 py-1 bg-yellow-500 text-white rounded hover:bg-yellow-600"
                     >
                       Confirm Return

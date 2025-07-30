@@ -122,34 +122,6 @@ router.delete("/:request_id", verifyToken, async (req, res) => {
 });
 
 
-// router.post("/:request_id/return", verifyToken, async (req,res)=>{
-//     const request_id=req.params.request_id;
-//     const requester_id=req.user.userId
-
-//     try{
-
-//         console.log("return called");
-//         console.log(request_id,requester_id);
-//         const result =  await pool.query("SELECT * FROM requests WHERE id=$1 and requester_id=$2",[request_id,requester_id]);
-
-//         if(result.rows.length === 0){
-//             return res.status(403).json({error:"Not authorized to cancel request"})
-//         }
-
-//         const book_id=result.rows[0].book_id
-
-//         await pool.query("UPDATE books SET available = true WHERE id = $1",[book_id]);
-
-//         await pool.query("UPDATE requests SET status = 'returned' WHERE id=$1",[request_id]);
-
-//         res.json({message:"Book returned successfully"});
-
-//     } catch (err) {
-//         console.error("Return Book Error", err.message);
-//         res.status(500).json({ error: "Server error" });
-//     }
-// })
-
 router.patch('/:request_id/confirm', verifyToken, async (req, res) => {
     console.log("Inside /confirm route");
 
