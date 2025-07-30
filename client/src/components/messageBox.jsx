@@ -14,7 +14,7 @@ export default function MessageBox({requestId, userId}) {
                 const res=await axios.get(`http://localhost:5000/api/messages/${requestId}`);
 
                 setMessages(res.data)
-                console.log("Messages:",messages)
+                // console.log("Messages:",messages)
             } catch (err) {
                 console.error("Error Fetching Messgaes:", err)
             }
