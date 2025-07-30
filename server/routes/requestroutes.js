@@ -122,32 +122,33 @@ router.delete("/:request_id", verifyToken, async (req, res) => {
 });
 
 
-router.post("/:request_id/return", verifyToken, async (req,res)=>{
-    const request_id=req.params.request_id;
-    const requester_id=req.user.userId
+// router.post("/:request_id/return", verifyToken, async (req,res)=>{
+//     const request_id=req.params.request_id;
+//     const requester_id=req.user.userId
 
-    try{
+//     try{
 
-        console.log("return called");
-        const result =  await pool.query("SELECT * FROM requests WHERE id=$1 and requester_id=$2",[request_id,requester_id]);
+//         console.log("return called");
+//         console.log(request_id,requester_id);
+//         const result =  await pool.query("SELECT * FROM requests WHERE id=$1 and requester_id=$2",[request_id,requester_id]);
 
-        if(result.rows.length === 0){
-            return res.status(403).json({error:"Not authorized to cancel request"})
-        }
+//         if(result.rows.length === 0){
+//             return res.status(403).json({error:"Not authorized to cancel request"})
+//         }
 
-        const book_id=result.rows[0].book_id
+//         const book_id=result.rows[0].book_id
 
-        await pool.query("UPDATE books SET available = true WHERE id = $1",[book_id]);
+//         await pool.query("UPDATE books SET available = true WHERE id = $1",[book_id]);
 
-        await pool.query("UPDATE requests SET status = 'returned' WHERE id=$1",[request_id]);
+//         await pool.query("UPDATE requests SET status = 'returned' WHERE id=$1",[request_id]);
 
-        res.json({message:"Book returned successfully"});
+//         res.json({message:"Book returned successfully"});
 
-    } catch (err) {
-        console.error("Return Book Error", err.message);
-        res.status(500).json({ error: "Server error" });
-    }
-})
+//     } catch (err) {
+//         console.error("Return Book Error", err.message);
+//         res.status(500).json({ error: "Server error" });
+//     }
+// })
 
 router.patch('/:request_id/confirm', verifyToken, async (req, res) => {
     console.log("Inside /confirm route");
@@ -213,9 +214,11 @@ router.post("/:id/return", verifyToken, async (req, res) => {
   const requestId = req.params.id;
   const userId = req.user.userId;
 
+  
   try {
     const { rows } = await pool.query(
-      `SELECT r.id AS request_id, r.requester_id AS sender_id, 
+      `SELECT r.id AS request_id, r.requester_id AS sender_id,
+              r.book_id AS book_id, 
               b.owner_id AS receiver_id, r.sender_returned, r.receiver_returned 
        FROM requests r 
        JOIN books b ON r.book_id = b.id 
@@ -226,11 +229,7 @@ router.post("/:id/return", verifyToken, async (req, res) => {
     if (!rows[0]) return res.status(404).json({ error: "Not found" });
 
     const reqRow = rows[0];
-    let { sender_returned, receiver_returned } = reqRow;
-
-    console.log("User ID:", userId);
-    console.log("Sender ID:", reqRow.sender_id);
-    console.log("Receiver ID:", reqRow.receiver_id);
+    let { request_id,book_id,sender_returned, receiver_returned } = reqRow;
 
     if (parseInt(userId) === parseInt(reqRow.sender_id)) {
       sender_returned = true;
@@ -249,14 +248,12 @@ router.post("/:id/return", verifyToken, async (req, res) => {
       [sender_returned, receiver_returned, is_returned, requestId]
     );
 
-    console.log("req",reqRow);
-    res.json({ 
-  sender_returned, 
-  receiver_returned, 
-  is_returned,
-  sender_id: reqRow.sender_id,
-  receiver_id: reqRow.receiver_id
-});
+    console.log(request_id);
+
+    if (is_returned) {
+      await pool.query("UPDATE books SET available = $1 WHERE id = $2",[is_returned,book_id])
+      await pool.query("UPDATE requests SET status = 'returned' WHERE id = $1",[request_id]);
+    }
   } catch (err) {
     console.error(err);
     res.status(500).json({ error: "Internal error" });

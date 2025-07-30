@@ -66,6 +66,8 @@
           setIncomingRequests(prev =>
             prev.map(r => r.id === requestId ? { ...r, ...updated } : r)
           );
+
+          alert("Return Confirmed From your side");
         } catch (err) {
           console.error("Error confirming return:", err);
         }
@@ -201,12 +203,16 @@
 
             <div className="mt-3 flex flex-col gap-2">
               {/* Delete Request Button */}
+              {req.status=='pending' && (
+                <>
               <button
                 onClick={() => handleDelete(req.id)}
                 className="px-4 py-1 text-sm bg-red-600 text-white rounded-lg hover:bg-red-700 transition"
               >
                 Delete
               </button>
+</>
+              )}
 
               {/* Confirm Return Logic */}
               {req.is_exchanged && !req.is_returned && (
@@ -239,7 +245,7 @@
               {!req.sender_confirmed && req.status === "accepted" && (
                 <button
                   className="px-4 py-1 bg-green-600 text-white rounded hover:bg-green-700"
-                  onClick={() => handleExchangeConfirm(req.id)}
+                  onClick={() => handleConfirmExchange(req.id)}
                 >
                   Mark as Exchanged
                 </button>
@@ -272,32 +278,38 @@
             <p className="py-1"><span className="font-medium">🙋 Requested By:</span> {req.requester_name}</p>
             <p className="py-1"><span className="font-medium ">📌 Status:</span> {req.status}</p>
             <div className="mt-3">
+            {req.status==='pending' &&(
+              <>
             <button
               onClick={() => handleAccept(req.id)}
               className="self-start  px-4 py-1 text-sm bg-green-600 text-white rounded-lg hover:bg-green-700 transition"
             >
               Accept
             </button>
-
             <button
               onClick={() => handleReject(req.id)}
               className="self-start  px-4 py-1 text-sm bg-red-600 text-white rounded-lg hover:bg-red-700 transition"
             >
               Reject
             </button>
+</>
+            )}
 
             {req.is_exchanged && !req.is_returned && (
-  <>
-    {((parseInt(userId) === req.sender_id && !req.sender_returned) ||
-      (parseInt(userId) === req.receiver_id && !req.receiver_returned)) ? (
-        <button onClick={() => handleReturnConfirm(req.id)}>
-          Confirm Return
-        </button>
-      ) : (
-        <span>Waiting for other user...</span>
-      )}
-  </>
-)}
+                <>
+                  {(parseInt(userId) === req.sender_id && !req.sender_returned) ||
+                  (parseInt(userId) === req.receiver_id && !req.receiver_returned) ? (
+                    <button
+                      onClick={() => handleReturnConfirm(req.id)}
+                      className="px-4 py-1 bg-yellow-500 text-white rounded hover:bg-yellow-600"
+                    >
+                      Confirm Return
+                    </button>
+                  ) : (
+                    <span className="text-gray-500">Waiting for other user...</span>
+                  )}
+                </>
+              )}
 
 {req.is_returned && <span>✅ Book Returned</span>}
 
