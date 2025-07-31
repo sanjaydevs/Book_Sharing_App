@@ -5,18 +5,20 @@ import { FaUserCircle,FaGithub, FaLinkedin } from "react-icons/fa";
 const Footer = () => {
 
     return (
-    <nav className="flex items-center justify-between px-6 py-4 shadow-md bg-sky-100">
-        <h2>Created by Sanjay</h2>
-        
-        <div className="flex gap-4 text-gray-700 font-medium ">
-        <Link to="https://github.com/sanjaydevs" className="hover:text-blue-600">
-        <FaGithub className="size-8"/>
-        </Link>
-        <Link to="https://www.linkedin.com/in/sanjay-s-74551a2ba/" className="hover:text-blue-600">
-        <FaLinkedin className="size-8 " />
-        </Link>
-        </div>
-    </nav>
+    <div className="bg-[#2BBAA5]">
+        <nav className="flex items-center justify-between px-6 py-4 font-title">
+            <h2>Created by Sanjay</h2>
+            
+            <div className="flex gap-4 text-black font-medium ">
+            <Link to="https://github.com/sanjaydevs" className="hover:text-[#FAECB6] transition">
+            <FaGithub className="size-8"/>
+            </Link>
+            <Link to="https://www.linkedin.com/in/sanjay-s-74551a2ba/" className="hover:text-[#FAECB6] transition">
+            <FaLinkedin className="size-8 " />
+            </Link>
+            </div>
+        </nav>
+    </div>
     );
 };
 

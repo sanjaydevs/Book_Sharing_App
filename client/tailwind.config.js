@@ -5,7 +5,12 @@ module.exports = {
     "./src/**/*.{js,ts,jsx,tsx}",
   ],
   theme: {
-    extend: {},
+    extend: {
+      fontFamily:{
+        title:['"Alfa Slab One"', 'serif'],
+        brand:['"Bungee Inline"', 'sans-serif'],
+      }
+    },
   },
   plugins: [],
 }
