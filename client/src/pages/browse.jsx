@@ -99,8 +99,8 @@ export default function Browse () {
                 <span
                   className={`inline-block px-3 py-1 text-sm rounded border-black border-2 drop-shadow-[1px_1px_0_#000000] ${
                     book.available === true
-                      ? "bg-green-100 text-green-700"
-                      : "bg-red-100 text-red-600"
+                      ? "font-heading bg-green-100 text-green-700"
+                      : "font-heading bg-red-100 text-red-600"
                   }`}
                 >
                   {book.available===true ? "Available" : "Unavailable"}

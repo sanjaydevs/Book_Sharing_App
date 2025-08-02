@@ -2,6 +2,7 @@
   import axios from "axios";
   import {jwtDecode} from "jwt-decode";
   import MessageBox from "../components/messageBox";
+  import { HiArrowUp } from "react-icons/hi";
 
   const Dashboard=()=>{
     const [myBooks, setMyBooks] = useState([]);
@@ -167,7 +168,7 @@
 
     {/* Sent Requests Section */}
   <div>
-    <h2 className="text-2xl font-title mb-6">📤 Sent Requests</h2>
+    <h2 className="text-2xl font-title mb-6 flex gap-2"> Sent Requests</h2>
     {requests?.length > 0 ? (
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-2 gap-4">
         {requests.map((req) => {
@@ -248,7 +249,7 @@
 
     {/* Incoming Requests Section */}
     <div>
-      <h2 className="text-2xl font-title mb-6">📥 Incoming Requests</h2>
+      <h2 className="text-2xl font-title mb-6 flex gap-2">Incoming Requests</h2>
       {incomingRequests?.length > 0 ? (
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-2 gap-4">
           {incomingRequests.map((req) => (
