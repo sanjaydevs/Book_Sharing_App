@@ -43,48 +43,60 @@ export default function Login() {
 
     return (
         <div>
-            <div className="w-full h-screen flex items-center justify-center">
-                <div className="w-[90%] max-w-sm md:max-w-md lg:max-w-mg p-5 bg-gray-900
-                flex-col flex items-center gap-3 rounded-xl shadow-slate-500 shadow-lg">
-                    <img src="" alt=""/>
-                    <h1 className="text-lg md:text-xl font-semibold text-white">Register</h1>
+            <div className="bg-[#FAECB6] min-h-screen flex items-center justify-center">
+                <div className="w-full max-w-sm md:max-w-md lg:max-w-mg bg-[#F96635] border-black border-4 items-center rounded-xl shadow-[6px_6px_0_#000000]">
+                    <div>
+                        <div className="flex items-center justify-between px-4 py-2">
+                            <div className="flex space-x-2">
+                            <span className="w-3 h-3 bg-red-500 rounded-full border-2 border-black shadow-[1px_1px_0_#000000]" />
+                            <span className="w-3 h-3 bg-yellow-400 rounded-full border-2 border-black shadow-[1px_1px_0_#000000]" />
+                            <span className="w-3 h-3 bg-green-500 rounded-full border-2 border-black shadow-[1px_1px_0_#000000]" />
+                            </div>
+                            <h2 className="text-xl font-heading font-extrabold text-gray-800">REGISTER</h2>
+                        </div>
 
-                    <div className="w-full flex flex-col gap-3">
+                        {/* FULL-WIDTH LINE */}
+                        <div className="h-[3px] w-full bg-black mb-2" />
+                    </div>
+                    
+                    <p className=" font-heading text-xs md:text-sm text-gray-800 text-center">Already have an account ? <span className="text-white" ><Link to="/login" className="hover:text-black transition">Login</Link></span>
+                                        </p>
+                    <div className="w-full flex flex-col gap-3 px-4 py-2">
                         <form onSubmit={handleSubmit} className="space-y-4">
-                        <div className="w-full flex items-center bg-gray-800 p-2 rounded-xl gap-3">
+                        <div className="border-black border-2 shadow-[2px_2px_0_#000000] w-full flex items-center bg-gray-800 p-2 rounded-xl gap-3">
                             <CgProfile color="white"/>
                             <input 
                             name="name"
                             type="name"
                             onChange={handleChange}
                             placeholder="Enter your Name" 
-                            className="bg-transparent border-0 w-full outline-none text-sm md:text-base text-white"></input>
+                            className="font-heading bg-transparent border-0 w-full outline-none text-sm md:text-base text-white"></input>
                         </div>
 
-                        <div className="w-full flex items-center bg-gray-800 p-2 rounded-xl gap-3">
+                        <div className="border-black border-2 shadow-[2px_2px_0_#000000] w-full flex items-center bg-gray-800 p-2 rounded-xl gap-3">
                             <CiMail color="white"/>
                             <input
                             name="email"
                             type="email"
                             onChange={handleChange}
                             placeholder="Enter your NITC email id" 
-                            className="bg-transparent border-0 w-full outline-none text-sm md:text-base text-white"></input>
+                            className="font-heading bg-transparent border-0 w-full outline-none text-sm md:text-base text-white"></input>
                         </div>
 
-                        <div className="w-full flex items-center bg-gray-800 p-2 rounded-xl gap-3 relative">
+                        <div className="border-black border-2 shadow-[2px_2px_0_#000000] w-full flex items-center bg-gray-800 p-2 rounded-xl gap-3 relative">
                             <TbPasswordUser color="white"/>
                             <input 
                             name="password"
                             type="password" 
                             onChange={handleChange}
                             placeholder="Enter your password" 
-                            className="bg-transparent border-0 w-full outline-none text-sm md:text-base text-white"></input>
+                            className="font-heading bg-transparent border-0 w-full outline-none text-sm md:text-base text-white"></input>
                         </div>
 
                         <button 
                         name="submit"
                         type="submit"
-                        className="w-full p-2 bg-blue-500 rounded-xl hover:bg-blue-600 text-sm md:text-base text-white">Register</button>
+                        className="font-heading w-full p-2 bg-[#F9A822] border-black border-2 shadow-[2px_2px_0_#000000] rounded-xl hover:bg-blue-600 text-sm md:text-base text-black font-bold">Register</button>
 
                         </form>
                     </div>

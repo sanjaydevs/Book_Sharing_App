@@ -49,14 +49,14 @@ export default function MessageBox({requestId, userId}) {
     };
 
     return (
-    <div className="border rounded-lg p-4 bg-white shadow max-w-md mx-auto">
+    <div className="border-2 border-black drop-shadow-[2px_2px_0_#000000] rounded-lg p-4 bg-white shadow max-w-md mx-auto">
       <h2 className="text-xl font-semibold mb-2">Chat</h2>
-      <div className="h-64 overflow-y-auto border p-2 rounded bg-gray-100 mb-2">
+      <div className="border-2 border-black drop-shadow-[2px_2px_0_#000000] h-64 overflow-y-auto border p-2 rounded bg-gray-100 mb-2">
         {Array.isArray(messages) && messages.map((msg, idx) => (
           <div
             key={idx}
-            className={`mb-2 p-2 rounded w-fit break-words ${
-              msg.sender_id === NumericUserId ? "bg-blue-200 ml-auto text-right" : "bg-gray-300 mr-auto text-left"
+            className={`font-heading mb-2 p-2 rounded w-fit break-words ${
+              msg.sender_id === NumericUserId ? "border-2 border-black drop-shadow-[2px_2px_0_#000000] bg-blue-200 ml-auto text-right" : "border-2 border-black drop-shadow-[2px_2px_0_#000000] bg-gray-300 mr-auto text-left"
             } max-w-[75%]`}
           >
             {msg.content}
@@ -67,13 +67,13 @@ export default function MessageBox({requestId, userId}) {
       <div className="flex">
         <input
           type="text"
-          className="flex-1 p-2 border rounded-l"
+          className="font-heading border-2 border-black drop-shadow-[1px_1px_0_#000000] flex-1 p-2 border rounded-l w-full"
           placeholder="Type a message"
           value={newMessage}
           onChange={(e) => setNewMessage(e.target.value)}
         />
         <button
-          className="bg-blue-500 text-white px-4 py-2 rounded-r"
+          className="font-heading border-2 border-black drop-shadow-[1px_1px_0_#000000] bg-blue-500 text-white px-4 py-2 rounded-r"
           onClick={handleSend}
         >
           Send

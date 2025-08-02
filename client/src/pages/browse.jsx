@@ -66,41 +66,38 @@ export default function Browse () {
   };
 
   return (
-    <div className="min-h-screen bg-gray-50 px-6 py-10">
-      <h1 className="text-3xl font-semibold mb-6 text-center text-blue-600">
+    <div className="min-h-screen px-6 py-10 bg-[#FAECB6]">
+      <h1 className="font-title text-3xl font-semibold mb-6 text-center text-[#F96635] drop-shadow-[2px_2px_0_#000000]">
         Browse Books
       </h1>
 
-      <div className="flex justify-center mb-8 gap-3">
+      <div className="font-heading flex justify-center mb-8 gap-3">
         <input
           type="text"
           placeholder="Search by title or author..."
           value={inputValue}
           onChange={(e) => setInputValue(e.target.value)}
-          className="w-full max-w-md px-4 py-2 border border-gray-300 rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-400"
+          className="border-black border-2 drop-shadow-[3px_3px_0_#000000] w-full max-w-md px-4 py-2 rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-400"
         />
-        <button className="px-4 rounded-lg bg-blue-500 text-white"
+        <button className="border-black border-2 drop-shadow-[3px_3px_0_#000000] px-4 rounded-lg bg-[#B6E6FA] text-black hover:bg-blue-600 transition-colors duration-200"
         onClick={(e) => setSearchTerm(inputValue)}>Search</button>
       </div>
 
-      <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-4 ">
+      <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-6 ">
         {filteredBooks.length > 0 ? (
           filteredBooks.map((book, index) => (
             <div
               key={index}
-              className="bg-white rounded-2xl shadow-md overflow-hidden hover:shadow-xl transition-shadow duration-300"
+              className="bg-[#FACAB6] rounded-2xl border-2 border-black drop-shadow-[4px_4px_0_#000000] overflow-hidden hover:shadow-xl transition-shadow duration-300"
             >
-              <img
-                src={book.image}
-                alt={book.title}
-                className="w-full object-cover"
-              />
+              <img src={book.image} alt={book.title} className="w-full h-56 object-cover"/>
+              <div className="h-[2px] w-full bg-black"></div>
               <div className="p-4">
-                <h2 className="text-xl font-semibold">{book.title}</h2>
-                <p className="text-gray-600 mb-2">by {book.author}</p>
-                <p className="text-sm font-semibold mb-2">Owned by : {book.owner_name}</p>
+                <h2 className="text-xl font-title">{book.title}</h2>
+                <p className="font-heading text-gray-600 mb-2">by {book.author}</p>
+                <p className="font-heading text-sm font-semibold mb-2">Owned by : {book.owner_name}</p>
                 <span
-                  className={`inline-block px-3 py-1 text-sm rounded-full ${
+                  className={`inline-block px-3 py-1 text-sm rounded border-black border-2 drop-shadow-[1px_1px_0_#000000] ${
                     book.available === true
                       ? "bg-green-100 text-green-700"
                       : "bg-red-100 text-red-600"
@@ -110,10 +107,8 @@ export default function Browse () {
                 </span>
                 <button
                   onClick={()=>{sendRequest(book.id)}}
-                  className="mt-4 w-full bg-blue-500 text-white py-2 rounded-lg hover:bg-blue-600 transition-colors duration-200"
+                  className="font-heading text-black border-black border-2 drop-shadow-[3px_3px_0_#000000] mt-4 w-full bg-[#2BBAA5]  py-2 rounded-lg hover:bg-blue-600 transition-colors duration-200"
                   disabled={book.available !== true}
-                  
-                  
                 >
                   {book.available === true ? "Request" : "Unavailable"}
                 </button>

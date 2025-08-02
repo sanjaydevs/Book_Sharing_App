@@ -9,6 +9,7 @@ module.exports = {
       fontFamily:{
         title:['"Alfa Slab One"', 'serif'],
         brand:['"Bungee Inline"', 'sans-serif'],
+        heading:['"Space Grotesk"', 'sans-serif']
       }
     },
   },

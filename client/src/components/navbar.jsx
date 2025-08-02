@@ -37,7 +37,7 @@ const Navbar = () => {
             </Link>
             
             <div className="flex gap-4 text-black font-medium ">
-            <Link to="/browse" className="hover:text-[#FAECB6] transition">
+            <Link to="/browse" className=" font-heading font-extrabold text-lg hover:text-[#FAECB6] transition">
                 Browse
             </Link>
             
@@ -45,7 +45,7 @@ const Navbar = () => {
       <div className="relative" ref={dropdownRef}>
         <button
           onClick={() => setDropdownOpen(!dropdownOpen)}
-          className="flex items-center gap-1 hover:text-[#FAECB6] transition"
+          className="flex items-center gap-1 font-heading font-extrabold text-lg hover:text-[#FAECB6] transition"
         >
           <FaUserCircle size={22} />
           <span className="hidden sm:inline">Profile</span>
@@ -55,14 +55,14 @@ const Navbar = () => {
           <div className="absolute right-0 mt-2 w-40 bg-white text-black rounded-md shadow-lg z-10 py-2">
             <Link
               to="/dashboard"
-              className="block px-4 py-2 hover:bg-gray-100"
+              className="font-heading font-extrabold text-sm block px-4 py-2 hover:bg-gray-100"
               onClick={() => setDropdownOpen(false)}
             >
               My Dashboard
             </Link>
             <Link
               to="/add-book"
-              className="block px-4 py-2 hover:bg-gray-100"
+              className="font-heading font-extrabold text-sm block px-4 py-2 hover:bg-gray-100"
               onClick={() => setDropdownOpen(false)}
             >
               Add Book
@@ -74,7 +74,7 @@ const Navbar = () => {
                 alert("Logged out successfully");
                 navigate("/");
               }}
-              className="w-full text-left px-4 py-2 hover:bg-red-100 text-red-600"
+              className="font-heading font-extrabold text-sm w-full text-left px-4 py-2 hover:bg-red-100 text-red-600"
             >
               Logout
             </button>
@@ -83,8 +83,8 @@ const Navbar = () => {
       </div>
     ) : (
       <>
-        <Link to="/register" className="hover:text-blue-600">Register</Link>
-        <Link to="/login" className="hover:text-blue-600">Login</Link>
+        <Link to="/register" className="font-heading font-extrabold text-lg hover:text-[#FAECB6] transition0">Register</Link>
+        <Link to="/login" className="font-heading font-extrabold text-lg hover:text-[#FAECB6] transition">Login</Link>
       </>
     )}
             </div>
