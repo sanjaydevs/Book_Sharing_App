@@ -1,7 +1,7 @@
 import React, { useState ,useEffect} from "react";
 import axios from "axios";
 import {useNavigate} from "react-router-dom";
-
+const baseURL = import.meta.env.VITE_API_BASE_URL;
 
 
 export default function Browse () {
@@ -9,6 +9,7 @@ export default function Browse () {
   const [inputValue, setInputValue] = useState("");
   const [searchTerm, setSearchTerm] = useState("");
   const navigate=useNavigate();
+  
 
   useEffect(()=>{
     const token = localStorage.getItem("token");
@@ -21,7 +22,7 @@ export default function Browse () {
 
     const fetchBooks = async ()=>{
       try{
-        const res = await axios.get("http://localhost:5000/api/books/all", {
+        const res = await axios.get(`${baseURL}/api/books/all`, {
           headers:{
             Authorization:`Bearer ${token}`
           },
@@ -48,7 +49,7 @@ export default function Browse () {
       return alert("Please log in to Make requests")
     }
     try {
-      await axios.post(`http://localhost:5000/api/requests/${bookId}`,
+      await axios.post(`${baseURL}/api/requests/${bookId}`,
         {},
         {
         headers:{

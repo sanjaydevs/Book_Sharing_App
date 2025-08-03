@@ -3,6 +3,7 @@
   import {jwtDecode} from "jwt-decode";
   import MessageBox from "../components/messageBox";
   import { HiArrowUp } from "react-icons/hi";
+  const baseURL = import.meta.env.VITE_API_BASE_URL;
 
   const Dashboard=()=>{
     const [myBooks, setMyBooks] = useState([]);
@@ -19,7 +20,7 @@
       userId = decoded.userId;
     }
     const resetReqs = async()=>{
-      const sentRes = await axios.get("http://localhost:5000/api/requests/me",
+      const sentRes = await axios.get(`${baseURL}/api/requests/me`,
           {headers:
             {Authorization: `Bearer ${token}`}
         });
@@ -27,7 +28,7 @@
           
           setRequests(sentRes.data.requests);
 
-          const incomingRes= await axios.get("http://localhost:5000/api/requests/my-requests",
+          const incomingRes= await axios.get(`${baseURL}/api/requests/my-requests`,
           {headers:
             {Authorization: `Bearer ${token}` }
           });
@@ -38,7 +39,7 @@
 
     const handleConfirmExchange = async (requestId) => {
       try {
-        await axios.patch(`http://localhost:5000/api/requests/${requestId}/confirm`, 
+        await axios.patch(`${baseURL}/api/requests/${requestId}/confirm`, 
           null,
         {
           headers: {
@@ -61,7 +62,7 @@
         try {
           const token = localStorage.getItem("token");
           await axios.post(
-            `http://localhost:5000/api/requests/${requestId}/return`,
+            `${baseURL}/api/requests/${requestId}/return`,
             null,
             { headers: { Authorization: `Bearer ${token}` } }
           );
@@ -80,7 +81,7 @@
 
     const handleAccept = async (reqId)=>{
       try{
-        await axios.post(`http://localhost:5000/api/requests/${reqId}/accept`,
+        await axios.post(`${baseURL}/api/requests/${reqId}/accept`,
           null,
           {
           headers:{Authorization:`Bearer ${token}`},
@@ -103,7 +104,7 @@
 
     const handleDelete = async (reqId)=>{
       try{
-        await axios.delete(`http://localhost:5000/api/requests/${reqId}`,{
+        await axios.delete(`${baseURL}/api/requests/${reqId}`,{
           headers:{Authorization:`Bearer ${token}`},
         });
         
@@ -117,7 +118,7 @@
 
     const handleReject = async (reqId)=>{
       try{
-        await axios.post(`http://localhost:5000/api/requests/${reqId}/reject`,
+        await axios.post(`${baseURL}/requests/${reqId}/reject`,
           null,
           {
           headers:{Authorization:`Bearer ${token}`},

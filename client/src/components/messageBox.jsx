@@ -11,7 +11,7 @@ export default function MessageBox({requestId, userId}) {
     useEffect(()=>{
         const fetchMessages = async () => {
             try {
-                const res=await axios.get(`http://localhost:5000/api/messages/${requestId}`);
+                const res=await axios.get(`${baseURL}/api/messages/${requestId}`);
 
                 setMessages(res.data)
                 // console.log("Messages:",messages)
@@ -34,7 +34,7 @@ export default function MessageBox({requestId, userId}) {
         if (!newMessage.trim()) return;
 
         try {
-            const res= await axios.post("http://localhost:5000/api/messages",{
+            const res= await axios.post(`${baseURL}/api/messages`,{
                 requestId,
                 senderId: userId,
                 content: newMessage

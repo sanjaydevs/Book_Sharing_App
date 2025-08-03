@@ -17,7 +17,7 @@ export default function AddBook() {
         e.preventDefault();
         const token=localStorage.getItem("token");
         try{
-            const res = await axios.post("http://localhost:5000/api/books/add",form,{
+            const res = await axios.post(`${baseURL}/api/books/add`,form,{
                 headers:{
                     Authorization: `Bearer ${token}`
                 },
