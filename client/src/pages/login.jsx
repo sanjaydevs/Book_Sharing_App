@@ -30,6 +30,7 @@ export default function Login() {
 
 
         try {
+            console.log("Trying to call login call from frontend");
             const res = await axios.post(`${baseURL}/api/auth/login`, form);
             localStorage.setItem("token", res.data.token);
             window.dispatchEvent(new Event("authChange"));

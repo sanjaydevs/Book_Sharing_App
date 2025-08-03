@@ -43,6 +43,7 @@ router.post("/login", async (req,res)=>{
     const {email,password} = req.body;
 
     try{
+        console.log("Login route called in backend");
         const userResult = await pool.query("Select * From users WHERE email = $1",[email]);
         const user=userResult.rows[0];
 
