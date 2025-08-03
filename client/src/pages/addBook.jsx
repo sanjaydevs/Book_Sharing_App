@@ -1,5 +1,6 @@
 import React, {useState} from "react";
 import axios from "axios";
+import toast from "react-hot-toast";
 
 export default function AddBook() {
 
@@ -22,9 +23,9 @@ export default function AddBook() {
                     Authorization: `Bearer ${token}`
                 },
             });
-            alert("Book added successfully");
+            toast.success("Book added successfully", { duration: 3000 });
         } catch(err){
-            alert("Error adding book");
+            toast.error("Error adding book", { duration: 3000 });
             console.error("Error adding book:", err);
         }
     }

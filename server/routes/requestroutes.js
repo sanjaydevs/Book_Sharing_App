@@ -9,7 +9,6 @@ router.post("/:book_id", verifyToken, async (req,res)=>{
     const requester_id = req.user.userId;
 
     try {
-        console.log("Request incoming")
         const check = await pool.query("Select * from requests where book_id = $1 and requester_id = $2 and status!='returned'", [book_id, requester_id]);
 
         if (check.rows.length > 0) {

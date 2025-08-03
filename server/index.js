@@ -14,6 +14,10 @@ const app=express();
 app.use(cors());
 app.use(express.json());
 
+// {
+//     origin:["http://localhost:5173","https://book-sharing-app-lovat.vercel.app/"],
+//     credentials: true
+// }
 
 app.use("/api/auth", authRoutes);
 app.use("/api/books", bookRoutes);

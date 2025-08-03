@@ -1,6 +1,8 @@
 import React, { useState ,useEffect} from "react";
 import axios from "axios";
 import {useNavigate} from "react-router-dom";
+import toast from "react-hot-toast";
+
 const baseURL = import.meta.env.VITE_API_BASE_URL;
 
 
@@ -16,7 +18,7 @@ export default function Browse () {
 
     if (!token) {
       navigate("/login");
-      alert("You need to be logged in to browse books.");
+      toast.error("You need to be logged in to browse books.", { duration: 3000 });
       return;
     }
 
@@ -30,7 +32,7 @@ export default function Browse () {
         setBooks(res.data.books);
       } catch(err){
         console.error("Error fetching books:", err);
-        alert("Failed to fetch books. Please try again later.");
+        toast.error("Failed to fetch books. Please try again later.", { duration: 3000 });
       }
     };
     fetchBooks();
@@ -58,11 +60,21 @@ export default function Browse () {
         }
       );
 
-      alert("request sent")
+      toast.success("Request Sent.", { duration: 3000 });
 
-    } catch (err){
-      console.error(err)
-      alert("Failed to send Request")
+    } catch (error){
+      if (error.response) {
+        const status = error.response.status;
+        const message = error.response.data.message;
+
+        if (status === 400 && message === "Request already sent") {
+          toast.error("You've already sent a request for this book.", { duration: 3000 });
+        } else {
+          toast.error(`Error: ${message}`, { duration: 3000 });
+        }
+      } else {
+        toast.error("Something went wrong. Please try again.", { duration: 3000 });
+      }
     }
   };
 

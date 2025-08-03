@@ -1,6 +1,7 @@
 import { Link, useNavigate } from "react-router-dom";
 import {useState, useEffect, useRef} from "react";
 import { FaUserCircle } from "react-icons/fa";
+import toast from "react-hot-toast";
 
 const Navbar = () => {
     const [isLoggedin,setIsLoggedin]=useState(false);
@@ -71,7 +72,7 @@ const Navbar = () => {
               onClick={() => {
                 localStorage.removeItem("token");
                 window.dispatchEvent(new Event("authChange"));
-                alert("Logged out successfully");
+                toast.success("Logged out successfully", { duration: 1000});
                 navigate("/");
               }}
               className="font-heading font-extrabold text-sm w-full text-left px-4 py-2 hover:bg-red-100 text-red-600"

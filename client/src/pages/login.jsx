@@ -4,6 +4,7 @@ import { Link } from "react-router-dom";
 import React, { useState } from "react";
 import axios from "axios";
 import { useNavigate } from "react-router-dom";
+import toast from "react-hot-toast";
 const baseURL = import.meta.env.VITE_API_BASE_URL;
 
 export default function Login() {
@@ -35,7 +36,9 @@ export default function Login() {
             localStorage.setItem("token", res.data.token);
             window.dispatchEvent(new Event("authChange"));
             console.log(res.data)
-            alert("Login successful");
+
+            toast.success("Login successful", { duration: 3000 });
+            
             navigate("/browse");
         } catch (err) {
             alert("Login failed");

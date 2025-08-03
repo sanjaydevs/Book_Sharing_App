@@ -1,9 +1,11 @@
 import React, {useEffect,useState} from "react";
 import axios from "axios";
+const baseURL = import.meta.env.VITE_API_BASE_URL;
 
 export default function MessageBox({requestId, userId}) {
     const NumericUserId=Number(userId);
 
+    
     const [messages, setMessages] = useState([]);
     const [newMessage, setNewMessage] = useState("");
     const [refreshToggle, setRefreshToggle] = useState(false);

@@ -3,9 +3,13 @@
   import {jwtDecode} from "jwt-decode";
   import MessageBox from "../components/messageBox";
   import { HiArrowUp } from "react-icons/hi";
+  import toast from "react-hot-toast";
+
   const baseURL = import.meta.env.VITE_API_BASE_URL;
 
   const Dashboard=()=>{
+    const [showMessageBox, setShowMessageBox] = useState(false);
+
     const [myBooks, setMyBooks] = useState([]);
     const [requests,setRequests] = useState([]);
     const [incomingRequests, setIncomingRequests]=useState([]);
@@ -50,7 +54,7 @@
 
         await resetReqs();
         
-        alert("Exchange marked");
+        toast.success("Exchange marked", { duration: 3000 });
         // optionally refresh list
       } catch (err) {
         console.error(err);
@@ -70,7 +74,7 @@
 
           
           setTimeout(() => {
-            alert("Return Confirmed From your side");
+            toast.success("Return Confirmed From your side", { duration: 3000 });
             resetReqs(); // don’t await, just fire after alert
           }, 100);
 
@@ -98,7 +102,7 @@
         // setIncomingRequests(newincRes.data.requests);
       } catch (err){
         console.error("Error Accepting Request",err)
-        alert("Failed to Accept Request")
+        toast.error("Failed to Accept Request", { duration: 3000 });
       }
     };
 
@@ -109,10 +113,11 @@
         });
         
         setRequests((prev)=> prev.filter((r)=> r.id!==reqId));
+        toast.success("Request Deleted", { duration: 2000});
 
       }catch(err){
         console.error("Error Deleting Request",err)
-        alert("Failed to Delete Request")
+        toast.error("Failed to Delete Request", { duration: 2000 });
       }
     };
 
@@ -130,9 +135,10 @@
         // );
       } catch (err){
         console.error("Error Rejecting Request",err)
-        alert("Failed to Reject Request")
+        toast.error("Failed to Reject Request", { duration: 3000 });
       }
     };
+    
 
     useEffect(()=>{
       const fetchRequests = async ()=>{
@@ -222,9 +228,24 @@
                 {req.is_returned && <span className="text-green-600 font-medium">✅ Book Returned</span>}
 
                 {/* Optional Message Box */}
-                {req.status === "accepted" && req.requester_id === userId && (
+                {/* {req.status === "accepted" && req.requester_id === userId && (
                   <div className="mt-3">
                     <MessageBox userId={userId} requestId={req.id} />
+                  </div>
+                )} */}
+
+                {req.status === "accepted" && req.requester_id === userId && (
+                  <div className="">
+                    <button
+                      className="font-heading border-2 border-black drop-shadow-[2px_2px_0_#000000] px-3 py-1 rounded bg-blue-200 hover:bg-blue-400 transition"
+                      onClick={() => setShowMessageBox((prev) => !prev)}
+                    >
+                      {showMessageBox ? "Hide Chat" : "Show Chat"}
+                    </button>
+
+                    {showMessageBox && (
+                      <MessageBox userId={userId} requestId={req.id} />
+                    )}
                   </div>
                 )}
 
@@ -307,14 +328,20 @@
   {req.is_returned && <span>✅ Book Returned</span>}
 
               {req.status === "accepted" && req.requester_id !== userId && (
-                <div className="mt-3">
-                  {/* Message Component */}
-                  <MessageBox
-                    userId={userId}
-                    requestId={req.id}
-                  />
+                <div className="">
+                  <button
+                    className="font-heading border-2 border-black drop-shadow-[2px_2px_0_#000000] px-3 py-1 rounded bg-blue-200 hover:bg-blue-400 transition"
+                    onClick={() => setShowMessageBox((prev) => !prev)}
+                  >
+                    {showMessageBox ? "Hide Chat" : "Show Chat"}
+                  </button>
+
+                  {showMessageBox && (
+                    <MessageBox userId={userId} requestId={req.id}/>
+                  )}
                 </div>
               )}
+
 
               {!req.receiver_confirmed && req.status==="accepted" &&(
                 <button

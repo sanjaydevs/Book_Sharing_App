@@ -5,6 +5,7 @@ import { CgProfile } from "react-icons/cg";
 import { useNavigate } from "react-router-dom";
 import React, { useState } from "react";
 import axios from "axios";
+import toast from "react-hot-toast";
 
 export default function Login() {
     const navigate = useNavigate();
@@ -23,8 +24,13 @@ export default function Login() {
         e.preventDefault();
 
         if (!form.name || !form.email || !form.password){
-            alert("Please full all the fields");
+            toast.error("Please enter all fields", { duration: 3000 });
             return;
+        }
+
+        if (!form.email.endsWith("@nitc.ac.in")) {
+            toast.success("Only NITC mails are expected", { duration: 3000 });
+            return res.status(403).json({ message: "Only NITC emails are allowed" }); 
         }
 
 
@@ -33,10 +39,10 @@ export default function Login() {
             localStorage.setItem("token", res.data.token);
             window.dispatchEvent(new Event("authChange"));
             console.log(res.data)
-            alert("Registered successfully");
+            toast.success("Registered successfully", { duration: 3000 });
             navigate("/browse");
         } catch (err) {
-            alert("Register failed");
+            toast.error("Registration failed", { duration: 3000 });
             console.error("Register error:", err);
         }
     };
