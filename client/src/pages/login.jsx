@@ -4,6 +4,7 @@ import { Link } from "react-router-dom";
 import React, { useState } from "react";
 import axios from "axios";
 import { useNavigate } from "react-router-dom";
+const baseURL = import.meta.env.VITE_API_BASE_URL;
 
 export default function Login() {
 
@@ -29,7 +30,7 @@ export default function Login() {
 
 
         try {
-            const res = await axios.post("http://localhost:5000/api/auth/login", form);
+            const res = await axios.post(`${baseURL}/api/auth/login`, form);
             localStorage.setItem("token", res.data.token);
             window.dispatchEvent(new Event("authChange"));
             console.log(res.data)
