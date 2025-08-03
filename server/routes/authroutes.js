@@ -42,21 +42,35 @@ router.post("/register", async (req,res)=>{
 router.post("/login", async (req,res)=>{
     const {email,password} = req.body;
 
+    console.log("Login attempt for email:", email);
+
+    if (!email || !password) {
+        return res.status(400).json({error: "Email and password are required"});
+    }
+
     try{
         const userResult = await pool.query("Select * From users WHERE email = $1",[email]);
         const user=userResult.rows[0];
 
         if (!user){
+            console.log("User not found for email:", email);
             return res.status(404).json({error:"User not found"});
         }
 
         const isMatch = await bcrypt.compare(password,user.password);
         if(!isMatch){
+            console.log("Password mismatch for email:", email);
             return res.status(401).json({error:"Invalid Credentials"});
+        }
+
+        if (!process.env.JWT_SECRET) {
+            console.error("JWT_SECRET not set in environment variables");
+            return res.status(500).json({error: "Server configuration error"});
         }
 
         const token = jwt.sign({userId:user.id}, process.env.JWT_SECRET, {expiresIn:"7d"});
 
+        console.log("Login successful for user:", user.email);
         res.json({
             user:{
                 id:user.id,
@@ -67,6 +81,7 @@ router.post("/login", async (req,res)=>{
         });
     } catch (err){
         console.error("Login Error:",err.message);
+        console.error("Full error:", err);
         res.status(500).json({error:"Server Error"});
     }
 });

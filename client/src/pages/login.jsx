@@ -30,15 +30,28 @@ export default function Login() {
 
 
         try {
+            console.log("Making login request to:", `${baseURL}/api/auth/login`);
             const res = await axios.post(`${baseURL}/api/auth/login`, form);
             localStorage.setItem("token", res.data.token);
             window.dispatchEvent(new Event("authChange"));
-            console.log(res.data)
+            console.log("Login successful:", res.data)
             alert("Login successful");
             navigate("/browse");
         } catch (err) {
-            alert("Login failed");
             console.error("Login error:", err);
+            if (err.response) {
+                // Server responded with error status
+                console.error("Error response:", err.response.data);
+                alert(`Login failed: ${err.response.data.error || 'Unknown error'}`);
+            } else if (err.request) {
+                // Network error
+                console.error("Network error:", err.request);
+                alert("Login failed: Cannot connect to server. Please check your internet connection.");
+            } else {
+                // Other error
+                console.error("Error:", err.message);
+                alert(`Login failed: ${err.message}`);
+            }
         }
     };
 
