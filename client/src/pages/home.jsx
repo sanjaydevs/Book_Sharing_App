@@ -5,11 +5,13 @@ export default function Home(){
     const navigate=useNavigate();
 
     const handleClick=()=>{
-        navigate("/register");
+        navigate("/browse");
     };
 
     return (
-        <div className="relative bg-[#FAECB6] flex items-center justify-center">
+        <div className="relative overflow-hidden bg-[#FAECB6] flex items-center justify-center">
+            
+
             <div className="text-center text-neutral-content w-full overflow-hidden">
                 <div className="w-[66%] h-screen flex flex-col justify-center h-full pl-48 pb-40">
                     <h1 className="text-5xl md:text-6xl font-title text-[#2BBAA5] 
@@ -22,8 +24,11 @@ export default function Home(){
                     className="w-fit mx-auto px-6 py-3 font-title bg-[#F9A822] rounded-[10px] text-black border-2 border-black shadow-[4px_4px_0_#000] hover:bg-[#F96635] transition-all duration-200">START SHARING</button>
 
                 </div>
-                <div className="w-[34%]"></div>
+                <div className="w-[34%] flex items-end justify-center h-full pb-20">
+                    
+                </div>
             </div>
+            
         </div>
     );
 }

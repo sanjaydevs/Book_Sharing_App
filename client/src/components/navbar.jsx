@@ -2,6 +2,7 @@ import { Link, useNavigate } from "react-router-dom";
 import {useState, useEffect, useRef} from "react";
 import { FaUserCircle } from "react-icons/fa";
 import toast from "react-hot-toast";
+import BgLine from "../components/bgline";  
 
 const Navbar = () => {
     const [isLoggedin,setIsLoggedin]=useState(false);
@@ -32,6 +33,7 @@ const Navbar = () => {
 
     return (
       <div className="w-full flex justify-center bg-[#FAECB6] py-4">
+        
         <nav className="w-[90%] max-w-6xl flex items-center justify-between px-6 py-3 border-2 border-black rounded-xl shadow-[4px_4px_0_#000000] bg-[#2BBAA5]">
             <Link to="/" className="text-2xl font-bold text-black font-brand">
             BOOKSHARE
@@ -90,7 +92,9 @@ const Navbar = () => {
     )}
             </div>
         </nav>
+      
     </div>
+    
     );
 };
 
