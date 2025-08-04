@@ -143,7 +143,7 @@
     useEffect(()=>{
       const fetchRequests = async ()=>{
         try{
-          const sentRes = await axios.get("http://localhost:5000/api/requests/me",
+          const sentRes = await axios.get(`${baseURL}/api/requests/me`,
           {headers:
             {Authorization: `Bearer ${token}`}
         });
@@ -151,7 +151,7 @@
           
           setRequests(sentRes.data.requests);
 
-          const incomingRes= await axios.get("http://localhost:5000/api/requests/my-requests",
+          const incomingRes= await axios.get(`${baseURL}/api/requests/my-requests`,
           {headers:
             {Authorization: `Bearer ${token}` }
           });
