@@ -189,11 +189,11 @@ router.post("/:id/return", verifyToken, async (req, res) => {
   try {
     const { rows } = await pool.query(
       `SELECT r.id AS request_id, r.requester_id AS sender_id,
-              r.book_id AS book_id, 
-              b.owner_id AS receiver_id, r.sender_returned, r.receiver_returned 
-       FROM requests r 
-       JOIN books b ON r.book_id = b.id 
-       WHERE r.id = $1`,
+      r.book_id AS book_id, 
+      b.owner_id AS receiver_id, r.sender_returned, r.receiver_returned 
+      FROM requests r 
+      JOIN books b ON r.book_id = b.id 
+      WHERE r.id = $1`,
       [requestId]
     );
 
@@ -214,8 +214,8 @@ router.post("/:id/return", verifyToken, async (req, res) => {
 
     await pool.query(
       `UPDATE requests
-       SET sender_returned = $1, receiver_returned = $2, is_returned = $3
-       WHERE id = $4`,
+      SET sender_returned = $1, receiver_returned = $2, is_returned = $3
+      WHERE id = $4`,
       [sender_returned, receiver_returned, is_returned, requestId]
     );
 
@@ -225,6 +225,8 @@ router.post("/:id/return", verifyToken, async (req, res) => {
       await pool.query("UPDATE books SET available = $1 WHERE id = $2",[is_returned,book_id])
       await pool.query("UPDATE requests SET status = 'returned' WHERE id = $1",[request_id]);
     }
+
+    return res.status(200).json({ message: "Return confirmed" });
   } catch (err) {
     console.error(err);
     res.status(500).json({ error: "Internal error" });

@@ -64,19 +64,21 @@
 
     const handleReturnConfirm = async (requestId) => {
         try {
+          console.log("handlereturn");
+
           const token = localStorage.getItem("token");
           await axios.post(
             `${baseURL}/api/requests/${requestId}/return`,
             null,
             { headers: { Authorization: `Bearer ${token}` } }
           );
-          console.log("handlereturn");
-
           
           setTimeout(() => {
             toast.success("Return Confirmed From your side", { duration: 3000 });
             resetReqs(); // don’t await, just fire after alert
           }, 100);
+
+          await resetReqs();
 
         } catch (err) {
           console.error("Error confirming return:", err);
@@ -93,13 +95,7 @@
         });
 
         await resetReqs();
-        // const newincRes= await axios.get("http://localhost:5000/api/requests/my-requests",
-        //   {headers:
-        //     {Authorization: `Bearer ${token}` }
-        //   });
-          
 
-        // setIncomingRequests(newincRes.data.requests);
       } catch (err){
         console.error("Error Accepting Request",err)
         toast.error("Failed to Accept Request", { duration: 3000 });
@@ -130,9 +126,7 @@
         })
 
         await resetReqs();
-        // setIncomingRequests((prev) =>
-        // prev.map((r) => (r.id === reqId ? { ...r, status: "rejected" } : r))
-        // );
+
       } catch (err){
         console.error("Error Rejecting Request",err)
         toast.error("Failed to Reject Request", { duration: 3000 });
@@ -227,13 +221,6 @@
                 {/* Book Returned Message */}
                 {req.is_returned && <span className="text-green-600 font-medium">✅ Book Returned</span>}
 
-                {/* Optional Message Box */}
-                {/* {req.status === "accepted" && req.requester_id === userId && (
-                  <div className="mt-3">
-                    <MessageBox userId={userId} requestId={req.id} />
-                  </div>
-                )} */}
-
                 {req.status === "accepted" && req.requester_id === userId && (
                   <div className="">
                     <button
@@ -320,7 +307,7 @@
                         Confirm Return
                       </button>
                     ) : (
-                      <span className="text-gray-500">Waiting for other user...</span>
+                      <span className="text-gray-500 font-heading">Waiting for other user...</span>
                     )}
                   </>
                 )}
