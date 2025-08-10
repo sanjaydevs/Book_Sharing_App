@@ -2,6 +2,10 @@ import React, {useState} from "react";
 import axios from "axios";
 import toast from "react-hot-toast";
 
+import {Filter} from 'bad-words';
+
+const filter = new Filter();
+
 export default function AddBook() {
 
         const [form,setForm]=useState({
@@ -14,8 +18,24 @@ export default function AddBook() {
         setForm({...form,[e.target.name]:e.target.value});
     }
 
+    const containsProfanity = (inputObj) => {
+        for (let key in inputObj) {
+        const value = inputObj[key];
+        if (typeof value === 'string' && filter.isProfane(value)) {
+            return true;
+        }
+        }
+        return false;
+    }
+
     const handleSubmit= async (e)=>{
         e.preventDefault();
+
+        if (containsProfanity(form)) {
+            toast.error("Inappropriate content detected in book details.", { duration: 3000 });
+            return;
+        }
+
         const token=localStorage.getItem("token");
         try{
             const res = await axios.post(`${baseURL}/api/books/add`,form,{

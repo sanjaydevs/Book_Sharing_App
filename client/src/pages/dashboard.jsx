@@ -4,10 +4,12 @@
   import MessageBox from "../components/messageBox";
   import { HiArrowUp } from "react-icons/hi";
   import toast from "react-hot-toast";
+  import { MoonLoader } from "react-spinners";
 
   const baseURL = import.meta.env.VITE_API_BASE_URL;
 
   const Dashboard=()=>{
+    const [loading, setLoading] = useState(true);
     const [showMessageBox, setShowMessageBox] = useState(false);
 
     const [myBooks, setMyBooks] = useState([]);
@@ -154,6 +156,8 @@
           setIncomingRequests(incomingRes.data.requests);
         } catch (err){
           console.error("Error fetching books");
+        } finally {
+          setLoading(false);
         }
       };
       if (token) {
@@ -170,6 +174,14 @@
     {/* Sent Requests Section */}
   <div>
     <h2 className="text-2xl font-title mb-6 flex gap-2"> Sent Requests</h2>
+    {loading ? (
+            <div className="flex justify-center items-center min-h-[50vh]">
+              <MoonLoader size={50}
+            color="#F96635"
+            />
+            </div>
+          ) : (
+    <div>
     {requests?.length > 0 ? (
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-2 gap-4">
         {requests.map((req) => {
@@ -253,12 +265,22 @@
     ) : (
       <p className="text-gray-500 font-heading ">No sent requests yet.</p>
     )}
+    </div>
+  )}
   </div>
 
 
     {/* Incoming Requests Section */}
     <div>
       <h2 className="text-2xl font-title mb-6 flex gap-2">Incoming Requests</h2>
+      {loading ? (
+            <div className="flex justify-center items-center min-h-[50vh]">
+              <MoonLoader size={50}
+            color="#F96635"
+            />
+            </div>
+          ) : (
+      <div>
       {incomingRequests?.length > 0 ? (
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-2 gap-4">
           {incomingRequests.map((req) => (
@@ -344,6 +366,8 @@
       ) : (
         <p className="text-gray-500 font-heading">No incoming requests.</p>
       )}
+      </div>
+  )}
     </div>
     </div>
 

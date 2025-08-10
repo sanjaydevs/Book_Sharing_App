@@ -2,11 +2,14 @@ import React, { useState ,useEffect} from "react";
 import axios from "axios";
 import {useNavigate} from "react-router-dom";
 import toast from "react-hot-toast";
+import { ClipLoader } from "react-spinners";
+
 
 const baseURL = import.meta.env.VITE_API_BASE_URL;
 
 
 export default function Browse () {
+  const [loading, setLoading] = useState(true);
   const [books, setBooks]=useState([]);
   const [inputValue, setInputValue] = useState("");
   const [searchTerm, setSearchTerm] = useState("");
@@ -33,9 +36,12 @@ export default function Browse () {
       } catch(err){
         console.error("Error fetching books:", err);
         toast.error("Failed to fetch books. Please try again later.", { duration: 3000 });
+      } finally {
+      setLoading(false); // stop loading
       }
     };
     fetchBooks();
+    
 
   },[navigate]);
 
@@ -84,6 +90,8 @@ export default function Browse () {
         Browse Books
       </h1>
 
+
+    
       <div className="font-heading flex justify-center mb-8 gap-3">
         <input
           type="text"
@@ -96,6 +104,12 @@ export default function Browse () {
         onClick={(e) => setSearchTerm(inputValue)}>Search</button>
       </div>
 
+
+    {loading ? (
+        <div className="flex justify-center items-center min-h-[50vh]">
+          <ClipLoader size={50} color="#F96635" />
+        </div>
+      ) : (
       <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-6 ">
         {filteredBooks.length > 0 ? (
           filteredBooks.map((book, index) => (
@@ -133,8 +147,11 @@ export default function Browse () {
             No books found.
           </p>
         )}
+        
       </div>
+      )}
     </div>
+    
   );
 };
 
