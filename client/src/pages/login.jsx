@@ -41,7 +41,7 @@ export default function Login() {
             
             navigate("/browse");
         } catch (err) {
-            alert("Login failed");
+            toast.error("Wrong credentials", { duration: 3000 });
             console.error("Login error:", err);
         }
     };

@@ -27,6 +27,7 @@ export default function Browse () {
 
     const fetchBooks = async ()=>{
       try{
+
         const res = await axios.get(`${baseURL}/api/books/all`, {
           headers:{
             Authorization:`Bearer ${token}`
@@ -35,7 +36,12 @@ export default function Browse () {
         setBooks(res.data.books);
       } catch(err){
         console.error("Error fetching books:", err);
-        toast.error("Failed to fetch books. Please try again later.", { duration: 3000 });
+        if (err.response && err.response.status === 403) {
+          toast.error("Session expired. Please login again.");
+          navigate("/login");
+        } else {
+          toast.error("Failed to fetch books. Please try again later.", { duration: 3000 });
+        }
       } finally {
       setLoading(false); // stop loading
       }
@@ -110,21 +116,21 @@ export default function Browse () {
           <ClipLoader size={50} color="#F96635" />
         </div>
       ) : (
-      <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-6 ">
+      <div className="grid gap-6 grid-cols-2  md:grid-cols-4 lg:grid-cols-6 mx-auto px-3 sm:px-6 ">
         {filteredBooks.length > 0 ? (
           filteredBooks.map((book, index) => (
             <div
               key={index}
-              className="bg-[#FACAB6] rounded-2xl border-2 border-black drop-shadow-[4px_4px_0_#000000] overflow-hidden hover:shadow-xl transition-shadow duration-300"
+              className="bg-[#FACAB6] rounded-xl border-2 border-black drop-shadow-[4px_4px_0_#000000] overflow-hidden hover:shadow-xl transition-shadow duration-300 w-full"
             >
-              <img src={book.image} alt={book.title} className="w-full h-56 object-cover"/>
+              <img src={book.image} alt={book.title} className="w-full h-48 sm:h-56 object-cover"/>
               <div className="h-[2px] w-full bg-black"></div>
               <div className="p-4">
-                <h2 className="text-xl font-title">{book.title}</h2>
-                <p className="font-heading text-gray-600 mb-2">by {book.author}</p>
-                <p className="font-heading text-sm font-semibold mb-2">Owned by : {book.owner_name}</p>
+                <h2 className="text-sm sm:text-base md:text-lg font-title">{book.title}</h2>
+                <p className="font-heading text-gray-600 mb-2 text-xs sm:text-sm">by {book.author}</p>
+                <p className="font-heading text-[10px] sm:text-xs md:text-sm font-semibold mb-2">Owned by : {book.owner_name}</p>
                 <span
-                  className={`inline-block px-3 py-1 text-sm rounded border-black border-2 drop-shadow-[1px_1px_0_#000000] ${
+                  className={`text-[10px] inline-block px-2 lg:px-2 py-1 text-sm rounded border-black border-2 drop-shadow-[1px_1px_0_#000000] ${
                     book.available === true
                       ? "font-heading bg-green-100 text-green-700"
                       : "font-heading bg-red-100 text-red-600"
@@ -134,7 +140,7 @@ export default function Browse () {
                 </span>
                 <button
                   onClick={()=>{sendRequest(book.id)}}
-                  className="font-heading text-black border-black border-2 drop-shadow-[3px_3px_0_#000000] mt-4 w-full bg-[#2BBAA5]  py-2 rounded-lg hover:bg-blue-600 transition-colors duration-200"
+                  className="text-[10px] lg:text-sm font-heading text-black border-black border-2 drop-shadow-[3px_3px_0_#000000] mt-4 w-full bg-[#2BBAA5] py-2 rounded-lg hover:bg-blue-600 transition-colors duration-200"
                   disabled={book.available !== true}
                 >
                   {book.available === true ? "Request" : "Unavailable"}

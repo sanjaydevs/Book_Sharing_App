@@ -12,13 +12,13 @@ export default function Home(){
     return (
         <div className="relative overflow-hidden bg-[#FAECB6] flex items-center justify-center h-screen">
             
-        <div className="w-full flex items-center">
+        <div className="w-full flex flex-col md:flex-row items-center">
             <div className="text-center text-neutral-content w-full overflow-hidden">
                 
-                <div className="w-[70%] flex flex-col justify-center h-full pl-48 pb-40">
-                    <h1 className="text-5xl md:text-6xl font-title text-[#2BBAA5] 
+                <div className="md:w-[70%] flex flex-col justify-center h-full pl-4 md:pl-48 pb-10 md:pb-40">
+                    <h1 className="text-4xl md:text-6xl font-title text-[#2BBAA5] 
                     drop-shadow-[2px_4px_0_#000000]">Welcome To</h1>
-                    <h2 className="text-6xl md:text-7xl font-brand text-[#F96635] drop-shadow-[2px_4px_0_#000000]">BOOKSHARE</h2>
+                    <h2 className="text-5xl md:text-7xl font-brand text-[#F96635] drop-shadow-[2px_4px_0_#000000]">BOOKSHARE</h2>
                     <p className="font-title px-2 py-2 text-gray-700">A place where books find new readers</p>
                     
                     <button 
@@ -27,11 +27,11 @@ export default function Home(){
 
                 </div>
             </div>
-                <div className="w-[30%] flex justify-center ">
+                <div className="md:w-[30%] flex justify-center ">
                     <img
                         src={booksImg}
                         alt="book"
-                        className="object-contain -ml-80 drop-shadow translate-y-[-50px] scale-[1.3]"
+                        className="object-contain w-40 sm:w-56 md:w-auto md:-ml-80 drop-shadow translate-y-0 md:translate-y-[-50px] md:scale-[1.3] md:-ml-80"
                     >    
                     </img>
                 </div>
