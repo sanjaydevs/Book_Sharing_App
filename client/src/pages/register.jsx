@@ -6,6 +6,7 @@ import { useNavigate } from "react-router-dom";
 import React, { useState } from "react";
 import axios from "axios";
 import toast from "react-hot-toast";
+const baseURL = import.meta.env.VITE_API_BASE_URL;
 
 export default function Login() {
     const navigate = useNavigate();
