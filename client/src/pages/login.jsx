@@ -41,9 +41,21 @@ export default function Login() {
             
             navigate("/browse");
         } catch (err) {
+            if (error.response) {
+            const status = error.response.status;
+            const message = error.response.data.message;    
+
+            if (status===401 && message==="Invalid Credentials")
+            {
             toast.error("Wrong credentials", { duration: 3000 });
+            } if (status===404 && message==="User not found")
+            {
+            toast.error("User not found", { duration: 3000 });
+            } else {
             console.error("Login error:", err);
+            }
         }
+    }
     };
 
     return (
