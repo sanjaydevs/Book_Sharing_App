@@ -12,6 +12,8 @@
     const [loading, setLoading] = useState(true);
     const [showMessageBox, setShowMessageBox] = useState(false);
 
+    const [activeChatId, setActiveChatId] = useState(null);
+
     const [myBooks, setMyBooks] = useState([]);
     const [requests,setRequests] = useState([]);
     const [incomingRequests, setIncomingRequests]=useState([]);
@@ -56,7 +58,7 @@
 
         await resetReqs();
         
-        toast.success("Exchange marked", { duration: 3000 });
+        toast.success("Exchange marked.", { duration: 3000 });
         // optionally refresh list
       } catch (err) {
         console.error(err);
@@ -173,7 +175,7 @@
 
     {/* Sent Requests Section */}
   <div>
-    <h2 className="text-2xl font-title mb-6 flex gap-2"> Sent Requests</h2>
+    <h2 className="sm:text-xl lg:text-2xl font-title mb-6 flex gap-2"> Sent Requests</h2>
     {loading ? (
             <div className="flex justify-center items-center min-h-[50vh]">
               <MoonLoader size={50}
@@ -183,7 +185,7 @@
           ) : (
     <div>
     {requests?.length > 0 ? (
-      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-2 gap-4">
+      <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
         {requests.map((req) => {
 
 
@@ -195,7 +197,7 @@
                 className="w-full h-40 object-cover rounded-md mb-3"
               />
               <div className="h-[3px] w-full bg-black mb-2" />
-              <p className="py-1 font-title"><span className="font-heading font-bold">📚 Book:</span> {req.title}</p>
+              <p className="py-1 font-title "><span className="font-heading font-bold">📚 Book:</span> {req.title}</p>
               <p className="py-1 font-heading"><span className="font-heading font-bold">👤 Owner:</span> {req.owner_name}</p>
               <p className="py-1 font-heading"><span className="font-heading font-bold">📌 Status:</span> {req.status}</p>
               
@@ -237,12 +239,12 @@
                   <div className="">
                     <button
                       className="font-heading border-2 border-black drop-shadow-[2px_2px_0_#000000] px-3 py-1 rounded bg-blue-200 hover:bg-blue-400 transition"
-                      onClick={() => setShowMessageBox((prev) => !prev)}
+                      onClick={() => setActiveChatId((prev) => (prev===req.id ? null : req.id))}
                     >
-                      {showMessageBox ? "Hide Chat" : "Show Chat"}
+                      {activeChatId === req.id ? "Hide Chat" : "Show Chat"}
                     </button>
 
-                    {showMessageBox && (
+                    {activeChatId === req.id && (
                       <MessageBox userId={userId} requestId={req.id} />
                     )}
                   </div>
@@ -272,7 +274,7 @@
 
     {/* Incoming Requests Section */}
     <div>
-      <h2 className="text-2xl font-title mb-6 flex gap-2">Incoming Requests</h2>
+      <h2 className="sm:text-xl lg:text-2xl font-title mb-6 flex gap-2">Incoming Requests</h2>
       {loading ? (
             <div className="flex justify-center items-center min-h-[50vh]">
               <MoonLoader size={50}
