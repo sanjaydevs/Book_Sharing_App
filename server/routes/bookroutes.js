@@ -2,6 +2,7 @@ import pool from "../db.js";
 import express from "express";
 import verifyToken from "../middleware/verifyToken.js";
 
+
 const router = express.Router();
 
 router.get("/search", async (req, res) => {
@@ -25,15 +26,16 @@ router.post("/add", verifyToken, async (req, res) => {
     const {title,author,image} =req.body
     const userId= req.user.userId;
 
+    console.log("Add book called in backend");
     if (!title || !author) {
         return res.status(400).json({error:"Title and Author are required"})    
     }
 
     try{
-        const result = await pool.query("INSERT INTO books (title, author, owner_id,image) VALUES ($1, $2, $3,$4) RETURNING *",[title,author,userId,image]);
+        const result = await pool.query("INSERT INTO books (title, author, owner_id,image) VALUES ($1, $2, $3, COALESCE($4, 'noimage')) RETURNING *",[title,author,userId,image]);
         res.status(201).json({book:result.rows[0]});
     } catch(err){
-        console.error("Add book error:", err.message);
+        console.error("Add book error:", err);
         res.status(500).json({error:"Server Error"});
     }
 });
