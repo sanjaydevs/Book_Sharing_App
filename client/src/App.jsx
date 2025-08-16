@@ -6,8 +6,10 @@ import Register from "./pages/register";
 import Login from "./pages/login";
 import Dashboard from "./pages/dashboard";
 import AddBook from "./pages/addBook";
+import MyBooks from "./pages/myBooks";
 import Navbar from "./components/navbar";
 import Footer from "./components/footer";
+
 import { Toaster } from "react-hot-toast";
 
 function App() {
@@ -33,6 +35,7 @@ function App() {
         <Route path="/login" element={<Login />} />
         <Route path="/dashboard" element={<Dashboard />} />
         <Route path="/add-book" element={<AddBook />} />
+        <Route path="/my-books" element={<MyBooks />} />
       </Routes>
     <Footer />
     </Router>

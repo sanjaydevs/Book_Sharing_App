@@ -123,7 +123,7 @@ export default function Browse () {
               key={index}
               className="bg-[#FACAB6] rounded-xl border-2 border-black drop-shadow-[4px_4px_0_#000000] overflow-hidden hover:shadow-xl transition-shadow duration-300 w-full"
             >
-              <img src={book.image} alt={book.title} className="w-full h-48 sm:h-56 object-cover"/>
+              <img src={book.image} alt={book.title} className="w-full h-64 w-32 object-contain"/>
               <div className="h-[2px] w-full bg-black"></div>
               <div className="p-4">
                 <h2 className="text-sm sm:text-base md:text-lg font-title">{book.title}</h2>
