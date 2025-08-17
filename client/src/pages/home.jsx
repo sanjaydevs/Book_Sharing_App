@@ -10,7 +10,7 @@ export default function Home(){
     };
 
     return (
-        <div className="relative overflow-hidden bg-[#FAECB6] flex items-center justify-center h-screen">
+        <div className="min-h-full relative bg-[#FAECB6] flex items-center justify-center">
             
         <div className="w-full flex flex-col md:flex-row items-center">
             <div className="text-center text-neutral-content w-full overflow-hidden">

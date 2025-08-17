@@ -57,7 +57,7 @@ export default function AddBook() {
     
 
     return (
-        <div className="min-h-screen bg-[#FAECB6] flex items-center justify-center">
+        <div className="min-h-full bg-[#FAECB6] flex items-center justify-center">
         <div className="w-full max-w-sm md:max-w-md lg:max-w-mg border rounded-xl bg-[#B6E6FA] border-2 border-black drop-shadow-[4px_4px_0_#000000]">
             <div>
                 <div className="flex items-center justify-between px-4 py-2">

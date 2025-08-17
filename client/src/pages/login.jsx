@@ -60,7 +60,7 @@ export default function Login() {
 
     return (
         <div>
-            <div className="bg-[#FAECB6] min-h-screen flex items-center justify-center">
+            <div className="bg-[#FAECB6] min-h-full flex items-center justify-center">
                 <div className="w-full max-w-sm md:max-w-md lg:max-w-mg bg-[#F9A822] border-black border-4 items-center rounded-xl shadow-[6px_6px_0_#000000]">
                     
                     <div>

@@ -16,6 +16,7 @@ function App() {
   return (
     
     <Router>
+      <div className="flex flex-col min-h-screen overflow-hidden">
     <Navbar />
     <Toaster
       position="top-right"
@@ -28,6 +29,7 @@ function App() {
         },
       }}
     />
+    <div className="flex-grow">
       <Routes>
         <Route path="/" element={<Home />} />
         <Route path="/browse" element={<Browse />} />
@@ -37,7 +39,9 @@ function App() {
         <Route path="/add-book" element={<AddBook />} />
         <Route path="/my-books" element={<MyBooks />} />
       </Routes>
+    </div>
     <Footer />
+    </div>
     </Router>
   );
 }

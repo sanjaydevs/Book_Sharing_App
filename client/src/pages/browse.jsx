@@ -91,7 +91,7 @@ export default function Browse () {
   };
 
   return (
-    <div className="min-h-screen px-6 py-10 bg-[#FAECB6]">
+    <div className="min-h-full px-6 py-6 sm:py-8 bg-[#FAECB6]">
       <h1 className="font-title text-3xl font-semibold mb-6 text-center text-[#F96635] drop-shadow-[2px_2px_0_#000000]">
         Browse Books
       </h1>
