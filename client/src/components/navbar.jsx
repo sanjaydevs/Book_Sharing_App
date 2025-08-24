@@ -65,7 +65,7 @@ const Navbar = () => {
                     className="block px-4 py-2 hover:bg-gray-100"
                     onClick={() => setDropdownOpen(false)}
                   >
-                    My Dashboard
+                    Requests
                   </Link>
                   <Link
                     to="/my-books"
@@ -134,7 +134,7 @@ const Navbar = () => {
                   className="block px-4 py-2 hover:bg-gray-100"
                   onClick={() => setMenuOpen(false)}
                 >
-                  My Dashboard
+                  Requests
                 </Link>
                 <Link
                   to="/add-book"
