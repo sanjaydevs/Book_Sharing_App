@@ -2,6 +2,7 @@ import express from "express";
 import pool from "../db.js"
 import jwt from "jsonwebtoken";
 import bcrypt from "bcryptjs";
+import { OAuth2Client } from "google-auth-library";
 
 import verifyToken from "../middleware/verifyToken.js";
 
@@ -81,5 +82,63 @@ router.post("/me",verifyToken, async (req,res)=>{
         res.status(500).json({error: "Server error"})
     }
 })
+
+router.get("/google", (req, res) => {
+  const redirect_uri = "http://localhost:5000/api/auth/google/callback"; // Change in production
+    const client_id = process.env.GOOGLE_CLIENT_ID;
+
+    const url = `https://accounts.google.com/o/oauth2/v2/auth?client_id=${client_id}&redirect_uri=${encodeURIComponent(redirect_uri)}&response_type=code&scope=email%20profile`;
+
+    res.redirect(url);
+});
+
+router.get("/google/callback", async (req, res) => {
+    const code = req.query.code;
+
+    const client = new OAuth2Client(
+        process.env.GOOGLE_CLIENT_ID,
+        process.env.GOOGLE_CLIENT_SECRET,
+        "http://localhost:5000/api/auth/google/callback" // Must match redirect URI
+    );
+
+    try {
+        // Exchange code for tokens
+        const { tokens } = await client.getToken({
+            code,
+            redirect_uri: "http://localhost:5000/api/auth/google/callback"
+        });
+        client.setCredentials(tokens);
+
+        // Decode ID token
+        const ticket = await client.verifyIdToken({
+        idToken: tokens.id_token,
+        audience: process.env.GOOGLE_CLIENT_ID,
+    });
+
+    const payload = ticket.getPayload();
+    const { email, name } = payload;
+
+    // Check DB for user
+    let userResult = await pool.query("SELECT * FROM users WHERE email = $1", [email]);
+    let user = userResult.rows[0];
+
+    if (!user) {
+        const result = await pool.query(
+        "INSERT INTO users (name, email, password) VALUES ($1,$2,$3) RETURNING id,name,email",
+        [name, email, "google-oauth"] // password = null for Google users
+        );
+        user = result.rows[0];
+    }
+
+    // Create JWT
+    const token = jwt.sign({ userId: user.id }, process.env.JWT_SECRET, { expiresIn: "7d" });
+
+    // Redirect to frontend with token
+    res.redirect(`http://localhost:5173/oauth-success?token=${token}`);
+    } catch (err) {
+        console.error("Google OAuth error:", err);
+        res.status(500).json({ error: "Google login failed" });
+    }
+});
 
 export default router
