@@ -41,9 +41,9 @@ export default function Login() {
             
             navigate("/browse");
         } catch (err) {
-            if (error.response) {
-            const status = error.response.status;
-            const message = error.response.data.message;    
+            if (err.response) {
+            const status = err.response.status;
+            const message = err.response.data.message;    
 
             if (status===401 && message==="Invalid Credentials")
             {
@@ -113,7 +113,22 @@ export default function Login() {
                         className="font-heading w-full p-2 bg-[#F96635] border-black border-2 shadow-[2px_2px_0_#000000] rounded-xl hover:bg-blue-600 text-sm md:text-base text-black font-bold">Login</button>
 
                         </form>
-
+                        
+                        <div className="flex flex-col gap-3 mt-4">
+                            <p className="text-center text-gray-700 font-heading text-sm">Or</p>
+                            <button
+                                type="button"
+                                onClick={() => window.location.href = `${baseURL}/api/auth/google`}
+                                className="font-heading w-full p-2 bg-white border-black border-2 shadow-[2px_2px_0_#000000] rounded-xl hover:bg-gray-200 text-sm md:text-base text-black font-bold flex items-center justify-center gap-2"
+                            >
+                                <img
+                                src="https://www.svgrepo.com/show/355037/google.svg"
+                                alt="Google"
+                                className="w-5 h-5"
+                                />
+                                Login with Google
+                            </button>
+                        </div>  
                     </div>
                 </div>
             </div>

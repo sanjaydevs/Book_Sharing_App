@@ -9,6 +9,7 @@ import AddBook from "./pages/addBook";
 import MyBooks from "./pages/myBooks";
 import Navbar from "./components/navbar";
 import Footer from "./components/footer";
+import OauthSuccess from "./pages/oauthSuccess";
 
 import { Toaster } from "react-hot-toast";
 
@@ -31,6 +32,7 @@ function App() {
     />
     <div className="flex-grow">
       <Routes>
+        <Route path="/oauth-success" element={<OauthSuccess />} />
         <Route path="/" element={<Home />} />
         <Route path="/browse" element={<Browse />} />
         <Route path="/register" element={<Register />} />

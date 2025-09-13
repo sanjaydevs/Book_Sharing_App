@@ -3,10 +3,8 @@ import axios from "axios";
 import toast from "react-hot-toast";
 
 import {Filter} from 'bad-words';
-const baseURL = import.meta.env.VITE_API_BASE_URL;
 
 const filter = new Filter();
-
 
 export default function AddBook() {
 
@@ -33,7 +31,6 @@ export default function AddBook() {
     const handleSubmit= async (e)=>{
         e.preventDefault();
 
-        
         if (containsProfanity(form)) {
             toast.error("Inappropriate content detected in book details.", { duration: 3000 });
             return;
@@ -41,9 +38,8 @@ export default function AddBook() {
 
         const token=localStorage.getItem("token");
         try{
-            console.log("Add book called in frontend");
-            const res = await axios.post(`${baseURL}/api/books/add`,form,
-                {headers:{
+            const res = await axios.post(`${baseURL}/api/books/add`,form,{
+                headers:{
                     Authorization: `Bearer ${token}`
                 },
             });
@@ -57,7 +53,7 @@ export default function AddBook() {
     
 
     return (
-        <div className="min-h-full bg-[#FAECB6] flex items-center justify-center">
+        <div className="min-h-screen bg-[#FAECB6] flex items-center justify-center">
         <div className="w-full max-w-sm md:max-w-md lg:max-w-mg border rounded-xl bg-[#B6E6FA] border-2 border-black drop-shadow-[4px_4px_0_#000000]">
             <div>
                 <div className="flex items-center justify-between px-4 py-2">

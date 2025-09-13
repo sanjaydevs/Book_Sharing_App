@@ -84,22 +84,21 @@ router.post("/me",verifyToken, async (req,res)=>{
 })
 
 router.get("/google", (req, res) => {
-  const redirect_uri = "http://localhost:5000/api/auth/google/callback"; // Change in production
-    const client_id = process.env.GOOGLE_CLIENT_ID;
+  const redirect_uri = "http://localhost:5000/api/auth/google/callback";
+  const client_id = process.env.GOOGLE_CLIENT_ID;
 
-    const url = `https://accounts.google.com/o/oauth2/v2/auth?client_id=${client_id}&redirect_uri=${encodeURIComponent(redirect_uri)}&response_type=code&scope=email%20profile`;
+  const url = `https://accounts.google.com/o/oauth2/v2/auth?client_id=${client_id}&redirect_uri=${redirect_uri}&response_type=code&scope=openid%20email%20profile&access_type=offline&prompt=consent`;
 
-    res.redirect(url);
+  res.redirect(url);
 });
-
 router.get("/google/callback", async (req, res) => {
     const code = req.query.code;
 
     const client = new OAuth2Client(
-        process.env.GOOGLE_CLIENT_ID,
-        process.env.GOOGLE_CLIENT_SECRET,
-        "http://localhost:5000/api/auth/google/callback" // Must match redirect URI
-    );
+    process.env.GOOGLE_CLIENT_ID,
+    process.env.GOOGLE_CLIENT_SECRET,
+    "http://localhost:5000/api/auth/google/callback"
+);
 
     try {
         // Exchange code for tokens
@@ -134,7 +133,7 @@ router.get("/google/callback", async (req, res) => {
     const token = jwt.sign({ userId: user.id }, process.env.JWT_SECRET, { expiresIn: "7d" });
 
     // Redirect to frontend with token
-    res.redirect(`http://localhost:5173/oauth-success?token=${token}`);
+    res.redirect(`${process.env.FRONTEND_URL || 'http://localhost:5173'}/oauth-success?token=${token}`);
     } catch (err) {
         console.error("Google OAuth error:", err);
         res.status(500).json({ error: "Google login failed" });
