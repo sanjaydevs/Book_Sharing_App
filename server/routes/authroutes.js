@@ -6,7 +6,7 @@ import { OAuth2Client } from "google-auth-library";
 
 import verifyToken from "../middleware/verifyToken.js";
 
-const FRONTEND_URL = process.env.FRONTEND_URL;
+const BACKEND_URL = process.env.BACKEND_URL;
 
 const router= express.Router();
 
@@ -86,7 +86,7 @@ router.post("/me",verifyToken, async (req,res)=>{
 })
 
 router.get("/google", (req, res) => {
-  const redirect_uri = `${FRONTEND_URL}/api/auth/google/callback`;
+  const redirect_uri = `${BACKEND_URL}/api/auth/google/callback`;
   const client_id = process.env.GOOGLE_CLIENT_ID;
 
   const url = `https://accounts.google.com/o/oauth2/v2/auth?client_id=${client_id}&redirect_uri=${redirect_uri}&response_type=code&scope=openid%20email%20profile&access_type=offline&prompt=consent`;
@@ -99,14 +99,14 @@ router.get("/google/callback", async (req, res) => {
     const client = new OAuth2Client(
     process.env.GOOGLE_CLIENT_ID,
     process.env.GOOGLE_CLIENT_SECRET,
-    `${FRONTEND_URL}/api/auth/google/callback`
+    `${BACKEND_URL}/api/auth/google/callback`
 );
 
     try {
         // Exchange code for tokens
         const { tokens } = await client.getToken({
             code,
-            redirect_uri: `${FRONTEND_URL}/api/auth/google/callback`
+            redirect_uri: `${BACKEND_URL}/api/auth/google/callback`
         });
         client.setCredentials(tokens);
 
