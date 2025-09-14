@@ -9,7 +9,7 @@ import AddBook from "./pages/addBook";
 import MyBooks from "./pages/myBooks";
 import Navbar from "./components/navbar";
 import Footer from "./components/footer";
-import OauthSuccess from "./pages/oauthSuccess";
+import OauthSuccess from "./pages/OauthSuccess";
 
 import { Toaster } from "react-hot-toast";
 

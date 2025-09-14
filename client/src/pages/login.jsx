@@ -43,7 +43,7 @@ export default function Login() {
         } catch (err) {
             if (err.response) {
             const status = err.response.status;
-            const message = err.response.data.message;    
+            const message = err.response.data.error;    
 
             if (status===401 && message==="Invalid Credentials")
             {

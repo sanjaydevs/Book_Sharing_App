@@ -18,6 +18,7 @@ useEffect(() => {
     window.dispatchEvent(new Event("authChange"));
     navigate("/browse", { replace: true }); // <-- replace avoids stacking
   } else {
+    
     console.error("No token found in URL");
     navigate("/register", { replace: true });
   }
