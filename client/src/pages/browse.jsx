@@ -11,9 +11,12 @@ const baseURL = import.meta.env.VITE_API_BASE_URL;
 export default function Browse () {
   const [loading, setLoading] = useState(true);
   const [books, setBooks]=useState([]);
-  const [inputValue, setInputValue] = useState("");
-  const [searchTerm, setSearchTerm] = useState("");
   const navigate=useNavigate();
+
+  const [title, setTitle] = useState("");
+  const [author, setAuthor] = useState("");
+  const [available, setAvailable] = useState(""); // "true", "false", or ""
+  const [genre, setGenre] = useState("");
   
 
   useEffect(()=>{
@@ -51,11 +54,41 @@ export default function Browse () {
 
   },[navigate]);
 
-  const filteredBooks = books.filter(
-    (book) =>
-      book.title.toLowerCase().includes(searchTerm.toLowerCase()) ||
-      book.author.toLowerCase().includes(searchTerm.toLowerCase())
-  );
+  // const filteredBooks = books.filter(
+  //   (book) =>
+  //     book.title.toLowerCase().includes(searchTerm.toLowerCase()) ||
+  //     book.author.toLowerCase().includes(searchTerm.toLowerCase())
+  // );
+
+
+  const fetchFilteredBooks = async()=>{
+    const token=localStorage.getItem("token");
+    if (!token){
+      toast.error("Please login to Search");
+      navigate("/login");
+      return;
+    }
+
+    setLoading(true);
+    try{
+      const res=await axios.get(`${baseURL}/api/books/search`,{
+        headers:{Authorization:`Bearer ${token}`},
+        params: {
+          title: title || undefined,
+          author: author || undefined,
+          available: available || undefined,
+          genre: genre || undefined,
+        }
+    });
+
+    setBooks(res.data.books);
+    }catch (err) {
+    console.error("Search error:", err);
+    toast.error("Failed to search books.");
+    } finally {
+      setLoading(false);
+    }
+  };
 
   const sendRequest = async (bookId) =>{
     const token= localStorage.getItem("token");
@@ -98,17 +131,44 @@ export default function Browse () {
 
 
     
-      <div className="font-heading flex justify-center mb-8 gap-3">
-        <input
-          type="text"
-          placeholder="Search by title or author..."
-          value={inputValue}
-          onChange={(e) => setInputValue(e.target.value)}
-          className="border-black border-2 drop-shadow-[3px_3px_0_#000000] w-full max-w-md px-4 py-2 rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-400"
-        />
-        <button className="border-black border-2 drop-shadow-[3px_3px_0_#000000] px-4 rounded-lg bg-[#B6E6FA] text-black hover:bg-blue-600 transition-colors duration-200"
-        onClick={(e) => setSearchTerm(inputValue)}>Search</button>
-      </div>
+      <div className="flex flex-wrap gap-3 mb-6 justify-center">
+  <input
+    type="text"
+    placeholder="Search by title..."
+    value={title}
+    onChange={(e) => setTitle(e.target.value)}
+    className="border border-black px-3 py-2 rounded-lg drop-shadow-[2px_2px_0_#000000]"
+  />
+  <input
+    type="text"
+    placeholder="Search by author..."
+    value={author}
+    onChange={(e) => setAuthor(e.target.value)}
+    className="border border-black px-3 py-2 rounded-lg drop-shadow-[2px_2px_0_#000000]"
+  />
+  <select
+    value={available}
+    onChange={(e) => setAvailable(e.target.value)}
+    className="border border-black px-3 py-2 rounded-lg drop-shadow-[2px_2px_0_#000000]"
+  >
+    <option value="">All</option>
+    <option value="true">Available</option>
+    <option value="false">Unavailable</option>
+  </select>
+  <input
+    type="text"
+    placeholder="Genre..."
+    value={genre}
+    onChange={(e) => setGenre(e.target.value)}
+    className="border border-black px-3 py-2 rounded-lg drop-shadow-[2px_2px_0_#000000]"
+  />
+  <button
+    onClick={fetchFilteredBooks}
+    className="px-4 py-2 bg-blue-500 text-white rounded-lg border border-black drop-shadow-[2px_2px_0_#000000]"
+  >
+    Search
+  </button>
+</div>
 
 
     {loading ? (
@@ -117,8 +177,8 @@ export default function Browse () {
         </div>
       ) : (
       <div className="grid gap-6 grid-cols-2  md:grid-cols-4 lg:grid-cols-6 mx-auto px-3 sm:px-6 ">
-        {filteredBooks.length > 0 ? (
-          filteredBooks.map((book, index) => (
+        {books.length > 0 ? (
+          books.map((book, index) => (
             <div
               key={index}
               className="bg-[#FACAB6] rounded-xl border-2 border-black drop-shadow-[4px_4px_0_#000000] overflow-hidden hover:shadow-xl transition-shadow duration-300 w-full"

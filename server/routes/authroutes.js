@@ -10,6 +10,34 @@ const BACKEND_URL = process.env.BACKEND_URL;
 
 const router= express.Router();
 
+router.get("/user/:id", verifyToken, async (req, res) => {
+  try {
+    console.log("userid called");
+    const userId = parseInt(req.params.id, 10);   // ✅ from URL param
+    if (Number.isNaN(userId)) {
+      return res.status(400).json({ error: "Invalid user id" });
+    }
+
+    
+    const userResult = await pool.query(
+      "SELECT id, name, email FROM users WHERE id = $1",
+      [userId]
+    );
+
+    console.log(userResult);
+    if (userResult.rows.length === 0) {
+      return res.status(404).json({ error: "User not found" });
+    }
+
+    // You can expand later (books count, history, etc.)
+    res.json({ user: userResult.rows[0] });
+  } catch (err) {
+    console.error("Fetch user error:", err.message);
+    res.status(500).json({ error: "Server error" });
+  }
+});
+
+
 router.post("/register", async (req,res)=>{
     const {name,email,password} = req.body;
 

@@ -106,7 +106,8 @@ export default function Login() {
                         className="font-heading w-full p-2 bg-[#F9A822] border-black border-2 shadow-[2px_2px_0_#000000] rounded-xl hover:bg-blue-600 text-sm md:text-base text-black font-bold">Register</button>
 
                         </form>
-                    <div className="flex flex-col gap-3 mt-4">
+                        
+                        <div className="flex flex-col gap-3 mt-4">
                             <p className="text-center text-gray-700 font-heading text-sm">Or</p>
                             <button
                                 type="button"

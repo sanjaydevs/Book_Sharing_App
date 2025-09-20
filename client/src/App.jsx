@@ -9,7 +9,8 @@ import AddBook from "./pages/addBook";
 import MyBooks from "./pages/myBooks";
 import Navbar from "./components/navbar";
 import Footer from "./components/footer";
-import OauthSuccess from "./pages/OauthSuccess";
+import OauthSuccess from "./pages/oauthSuccess";
+import UserProfile from "./pages/userProfile";
 
 import { Toaster } from "react-hot-toast";
 
@@ -40,6 +41,7 @@ function App() {
         <Route path="/dashboard" element={<Dashboard />} />
         <Route path="/add-book" element={<AddBook />} />
         <Route path="/my-books" element={<MyBooks />} />
+        <Route path="/:userId/profile" element={<UserProfile />} />
       </Routes>
     </div>
     <Footer />
