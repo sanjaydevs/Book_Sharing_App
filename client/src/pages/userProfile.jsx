@@ -81,20 +81,20 @@ const UserProfile = () => {
 
   if (loading) {
   return (
-    <div className="min-h-screen flex items-center justify-center">
+    <div className="min-h-screen flex items-center justify-center bg-[#FAECB6]">
       <ClipLoader size={50} color="#2563eb" /> 
     </div>
   );
 }
   if (error) {
     return (
-      <div className="min-h-screen flex items-center justify-center text-red-600">
+      <div className="min-h-screen flex items-center justify-center text-red-600 bg-[#FAECB6]">
         Error: {error}
       </div>
     );
   }
   if (!user && !loading) {
-    return <div className="min-h-screen flex items-center justify-center">No user found</div>;
+    return <div className="min-h-screen flex items-center justify-center bg-[#FAECB6]">No user found</div>;
   }
 
   return (

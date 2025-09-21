@@ -172,6 +172,15 @@ const Navbar = () => {
                 >
                   Add Book
                 </Link>
+                {userId && (
+                    <Link
+                      to={`/${userId}/profile`}
+                      className="block px-4 py-2 hover:bg-gray-100"
+                      onClick={() => setDropdownOpen(false)}
+                    >
+                      Profile
+                    </Link>
+                  )}
                 <button
                   onClick={() => {
                     localStorage.removeItem("token");
