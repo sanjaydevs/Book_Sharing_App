@@ -31,7 +31,7 @@ function App() {
         },
       }}
     />
-    <div className="flex-grow">
+    <div className="flex-grow overflow-auto">
       <Routes>
         <Route path="/oauth-success" element={<OauthSuccess />} />
         <Route path="/" element={<Home />} />

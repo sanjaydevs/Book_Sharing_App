@@ -3,6 +3,7 @@ import axios from "axios";
 import {useNavigate} from "react-router-dom";
 import toast from "react-hot-toast";
 import { ClipLoader } from "react-spinners";
+import { Link } from "react-router-dom";
 
 
 const baseURL = import.meta.env.VITE_API_BASE_URL;
@@ -188,7 +189,17 @@ export default function Browse () {
               <div className="p-4">
                 <h2 className="text-sm sm:text-base md:text-lg font-title">{book.title}</h2>
                 <p className="font-heading text-gray-600 mb-2 text-xs sm:text-sm">by {book.author}</p>
-                <p className="font-heading text-[10px] sm:text-xs md:text-sm font-semibold mb-2">Owned by : {book.owner_name}</p>
+                <p className="font-heading text-[10px] sm:text-xs md:text-sm font-semibold mb-2">
+                  Owned by :{" "}
+                  <Link 
+                    to={`/${book.owner_id}/profile`} 
+                    className="text-black hover:underline"
+                    title="View profile"
+                  >
+                    {book.owner_name}
+                  </Link>
+                </p>
+                  
                 <span
                   className={`text-[10px] inline-block px-2 lg:px-2 py-1 text-sm rounded border-black border-2 drop-shadow-[1px_1px_0_#000000] ${
                     book.available === true

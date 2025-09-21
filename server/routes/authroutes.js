@@ -104,7 +104,7 @@ router.post("/login", async (req,res)=>{
     }
 });
 
-router.post("/me",verifyToken, async (req,res)=>{
+router.get("/me",verifyToken, async (req,res)=>{
     try{
         const userResult = await pool.query("SELECT id,name,email FROM users WHERE id = $1",[req.user.userId]);
         res.json({user : userResult.rows[0]});
