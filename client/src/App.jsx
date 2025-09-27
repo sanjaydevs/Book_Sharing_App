@@ -11,6 +11,7 @@ import Navbar from "./components/navbar";
 import Footer from "./components/footer";
 import OauthSuccess from "./pages/oauthSuccess";
 import UserProfile from "./pages/userProfile";
+import EditProfile from "./components/editProfile";
 
 import { Toaster } from "react-hot-toast";
 
@@ -42,6 +43,7 @@ function App() {
         <Route path="/add-book" element={<AddBook />} />
         <Route path="/my-books" element={<MyBooks />} />
         <Route path="/:userId/profile" element={<UserProfile />} />
+        <Route path="/:userId/edit" element={<EditProfile />} />
       </Routes>
     </div>
     <Footer />

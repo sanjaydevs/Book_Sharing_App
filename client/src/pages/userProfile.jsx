@@ -2,6 +2,7 @@
 import React, { useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
 import { ClipLoader } from "react-spinners";
+import { Link } from "react-router-dom";
 
 const baseURL = import.meta.env.VITE_API_BASE_URL;
 
@@ -67,7 +68,15 @@ const UserProfile = () => {
         headers: { Authorization: `Bearer ${token}` },
       })
         .then((res) => res.json())
-        .then((data) => setCurrentUserId(data.user.id))
+        .then((data) => {
+          if (data && data.user) {
+            setCurrentUserId(data.user.id);
+          } else if (data && data.id) {
+            setCurrentUserId(data.id);
+          } else {
+            console.error("Unexpected /api/auth/me response:", data);
+          }
+        })
         .catch((err) => {
           console.error("Error fetching current user:", err);
         });
@@ -186,9 +195,11 @@ const UserProfile = () => {
       {/* Edit / Settings */}
       {currentUserId === user.id && (
         <div className="mt-6">
-          <button className="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700">
-            Edit Profile
-          </button>
+          <Link to={`/${user.id}/edit`}>
+            <button className="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700">
+              Edit Profile
+            </button>
+          </Link>
         </div>
       )}
     </div>

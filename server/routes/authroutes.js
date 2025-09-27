@@ -176,4 +176,31 @@ router.get("/google/callback", async (req, res) => {
     }
 });
 
+router.put("/:id/location", verifyToken, async (req, res) => {
+  const { id } = req.params;
+  const { lat, lng, address, place_id } = req.body;
+
+  if (!lat || !lng || !address) {
+    return res.status(400).json({ error: "lat, lng, and address are required" });
+  }
+
+  try {
+    const result = await pool.query(
+      `UPDATE users 
+       SET latitude = $1, longitude = $2, address = $3, place_id = $4
+       WHERE id = $5 RETURNING id, name, email, latitude, longitude, address, place_id`,
+      [lat, lng, address, place_id, id]
+    );
+
+    if (result.rows.length === 0) {
+      return res.status(404).json({ error: "User not found" });
+    }
+
+    res.json(result.rows[0]);
+  } catch (err) {
+    console.error("Error updating user location:", err);
+    res.status(500).json({ error: "Internal server error" });
+  }
+});
+
 export default router
