@@ -2,14 +2,12 @@
 import React, { useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
 import { ClipLoader } from "react-spinners";
-import { Link } from "react-router-dom";
 
 const baseURL = import.meta.env.VITE_API_BASE_URL;
 
 const UserProfile = () => {
   const { userId } = useParams(); // from route like "/:userId/profile"
   const [user, setUser] = useState(null);
-  const [currentUserId, setCurrentUserId] = useState(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
   const [notFound, setNotFound] = useState(false);
@@ -35,66 +33,57 @@ const UserProfile = () => {
 
     const fetchUser = async () => {
       setError(null);
-      setNotFound(false);
-      const token = localStorage.getItem("token");
-      const headers = token ? { Authorization: `Bearer ${token}` } : {};
-      return fetch(`${baseURL}/api/books/${id}/profile`, { headers, signal: controller.signal })
-        .then(async (res) => {
-          if (res.status === 404) {
-            setNotFound(true);
-            return null;
-          }
-          if (!res.ok) {
-            const text = await res.text();
-            throw new Error(`${res.status} ${res.statusText} — ${text}`);
-          }
-          return res.json();
-        })
-        .then((data) => {
-          if (data) setUser(data);
-        })
-        .catch((err) => {
-          if (err.name === "AbortError") return;
-          console.error("Error fetching profile:", err);
-          setError(err.message || "Failed to fetch profile");
+      try {
+        const token = localStorage.getItem("token");
+        const headers = token ? { Authorization: `Bearer ${token}` } : {};
+        const res = await fetch(`${baseURL}/api/books/${id}/profile`, {
+          headers,
+          signal: controller.signal,
         });
+
+        if (!res.ok) {
+          const text = await res.text();
+          throw new Error(`${res.status} ${res.statusText} — ${text}`);
+        }
+
+        const data = await res.json();
+        // book route returns the profile object directly
+        setUser(data);
+      } catch (err) {
+        if (err.name === "AbortError") return;
+        console.error("Error fetching profile:", err);
+        setError(err.message || "Failed to fetch profile");
+      } 
     };
-
-
 
     const fetchCurrentUser = async () => {
-      const token = localStorage.getItem("token");
-      return fetch(`${baseURL}/api/auth/me`, {
-        headers: { Authorization: `Bearer ${token}` },
-      })
-        .then((res) => res.json())
-        .then((data) => {
-          if (data && data.user) {
-            setCurrentUserId(data.user.id);
-          } else if (data && data.id) {
-            setCurrentUserId(data.id);
-          } else {
-            console.error("Unexpected /api/auth/me response:", data);
-          }
-        })
-        .catch((err) => {
-          console.error("Error fetching current user:", err);
+      try {
+        const token = localStorage.getItem("token");
+        const res = await fetch(`${baseURL}/api/auth/me`, {
+          headers: { Authorization: `Bearer ${token}` },
         });
+        const data = await res.json();
+        console.log(data);
+        setCurrentUserId(data.user.id);
+      } catch (err) {
+        console.error("Error fetching current user:", err);
+      } finally {
+        setLoading(false);
+      }
     };
 
     
-    
-  Promise.all([fetchUser(), fetchCurrentUser()])
-  .catch(err => console.error("Error in fetching data:", err))
-  .finally(() => setLoading(false));
+    fetchUser();
+    fetchCurrentUser();
     
     return () => controller.abort();
   }, [userId]);
 
+  
 
   if (loading) {
   return (
-    <div className="min-h-screen flex items-center justify-center bg-[#FAECB6]">
+    <div className="min-h-screen flex items-center justify-center">
       <ClipLoader size={50} color="#2563eb" /> 
     </div>
   );
@@ -106,18 +95,8 @@ const UserProfile = () => {
       </div>
     );
   }
-  if (!loading && !error && user === null && !notFound) {
-    // don’t render anything yet, just wait
-    
-    return (
-    <div className="min-h-screen flex items-center justify-center bg-[#FAECB6]">
-      <ClipLoader size={50} color="#2563eb" /> 
-    </div>
-  );;
-  }
-
-  if (notFound) {
-    return <div className="min-h-screen flex items-center justify-center bg-[#FAECB6]">No user found</div>;
+  if (!user && !loading) {
+    return <div className="min-h-screen flex items-center justify-center">No user found</div>;
   }
 
   return (
@@ -171,6 +150,37 @@ const UserProfile = () => {
         )}
       </div>
 
+      
+      {/* {user.books.length > 0 ? (
+          user.books.map((b) => (
+            <div
+              key={index}
+              className="bg-[#FACAB6] rounded-xl border-2 border-black drop-shadow-[4px_4px_0_#000000] overflow-hidden hover:shadow-xl transition-shadow duration-300 w-full"
+            >
+              <img src={b.image} alt={b.title} className="w-full h-48 sm:h-56 object-cover"/>
+              <div className="h-[2px] w-full bg-black"></div>
+              <div className="p-4">
+                <h2 className="text-sm sm:text-base md:text-lg font-title">{b.title}</h2>
+                <p className="font-heading text-gray-600 mb-2 text-xs sm:text-sm">by {b.author}</p>
+                <span
+                  className={`text-[10px] inline-block px-2 lg:px-2 py-1 text-sm rounded border-black border-2 drop-shadow-[1px_1px_0_#000000] ${
+                    b.available === true
+                      ? "font-heading bg-green-100 text-green-700"
+                      : "font-heading bg-red-100 text-red-600"
+                  }`}
+                >
+                  {b.available===true ? "Ready to Lend" : "Lent out"}
+                </span>
+              </div>
+            </div>
+          ))
+        ) : (
+          <p className="text-center text-gray-500 col-span-full">
+            No books found.
+          </p>
+        )} */}
+
+
         
       {/* History Block */}
       <div className="bg-[#F9A822] border-2 border-black shadow-[6px_6px_0_#000000] w-full max-w-3xl rounded-2xl p-6 mt-6">
@@ -195,11 +205,9 @@ const UserProfile = () => {
       {/* Edit / Settings */}
       {currentUserId === user.id && (
         <div className="mt-6">
-          <Link to={`/${user.id}/edit`}>
-            <button className="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700">
-              Edit Profile
-            </button>
-          </Link>
+          <button className="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700">
+            Edit Profile
+          </button>
         </div>
       )}
     </div>

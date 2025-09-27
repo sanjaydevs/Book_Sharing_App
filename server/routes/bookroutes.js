@@ -204,7 +204,7 @@ router.get("/all",verifyToken, async (req,res) =>{
     const userId=req.user.userId;
     console.log(userId);
     try{
-        const result = await pool.query(`SELECT books.*, users.name AS owner_name , users.id as owner_id FROM books JOIN users ON books.owner_id = users.id WHERE books.owner_id != $1`,[userId])
+        const result = await pool.query(`SELECT books.*, users.name AS owner_name FROM books JOIN users ON books.owner_id = users.id WHERE books.owner_id != $1`,[userId])
         res.json({books:result.rows})
     } catch (err) {
         console.error("Fetch All Books Error", err.message);
