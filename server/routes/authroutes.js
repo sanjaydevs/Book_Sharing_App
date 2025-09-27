@@ -10,6 +10,8 @@ const BACKEND_URL = process.env.BACKEND_URL;
 
 const router= express.Router();
 
+
+
 router.get("/user/:id", verifyToken, async (req, res) => {
   try {
     console.log("userid called");

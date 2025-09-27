@@ -1,5 +1,6 @@
 console.log("Server is starting");
 
+import pool from "./db.js";
 import express from "express";
 import cors from "cors";
 import dotenv from "dotenv"
@@ -9,6 +10,14 @@ import requestRoutes from "./routes/requestroutes.js";
 import messages from "./routes/messages.js";
 
 dotenv.config();
+
+pool.query("SELECT NOW()", (err, res) => {
+  if (err) {
+    console.error("❌ Database connection failed:", err);
+  } else {
+    console.log("✅ Database connected. Time:", res.rows[0].now);
+  }
+});
 
 const app=express();
 app.use(cors());
