@@ -203,4 +203,36 @@ router.put("/:id/location", verifyToken, async (req, res) => {
   }
 });
 
+router.put("/me/location", authMiddleware, async (req, res) => {
+  try {
+    const userId = req.user.id; // from JWT
+    const { location_name, latitude, longitude, address, place_id } = req.body;
+
+    if (!latitude || !longitude) {
+      return res.status(400).json({ error: "Latitude and longitude required" });
+    }
+
+    const result = await pool.query(
+      `UPDATE users
+       SET location_name = $1,
+           latitude = $2,
+           longitude = $3,
+           address = $4,
+           place_id = $5
+       WHERE id = $6
+       RETURNING id, name, email, location_name, latitude, longitude, address, place_id`,
+      [location_name || null, latitude, longitude, address || null, place_id || null, userId]
+    );
+
+    if (result.rows.length === 0) {
+      return res.status(404).json({ error: "User not found" });
+    }
+
+    res.json(result.rows[0]);
+  } catch (err) {
+    console.error("Error updating location:", err);
+    res.status(500).json({ error: "Server error" });
+  }
+});
+
 export default router

@@ -12,9 +12,10 @@ router.get("/:id/profile", async (req, res) => {
   try {
     // 1) user basic info
     const userRes = await pool.query(
-      `SELECT id, name, email, created_at
-       FROM users
-       WHERE id = $1`,
+      `SELECT id, name, email, created_at,
+              location_name, latitude, longitude, address, place_id
+      FROM users
+      WHERE id = $1`,
       [userId]
     );
 
@@ -94,6 +95,13 @@ router.get("/:id/profile", async (req, res) => {
       name: user.name,
       email: user.email,
       created_at: user.created_at,
+      location: {
+        location_name: user.location_name,
+        latitude: user.latitude,
+        longitude: user.longitude,
+        address: user.address,
+        place_id: user.place_id,
+      },
       books: booksRes.rows,
       stats: {
         booksListed: booksListedRes.rows[0].count,
@@ -202,7 +210,6 @@ router.get("/me", verifyToken, async (req, res) => {
 
 router.get("/all",verifyToken, async (req,res) =>{
     const userId=req.user.userId;
-    console.log(userId);
     try{
         const result = await pool.query(`SELECT books.*, users.name AS owner_name , users.id as owner_id FROM books JOIN users ON books.owner_id = users.id WHERE books.owner_id != $1`,[userId])
         res.json({books:result.rows})

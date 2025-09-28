@@ -132,6 +132,24 @@ const UserProfile = () => {
         <h1 className="text-2xl font-bold mt-4">{user.name}</h1>
         <p className="text-gray-600 mt-1">{user.email}</p>
         <p className="text-gray-500 text-sm mt-1">Joined: {new Date(user.created_at).toLocaleDateString()}</p>
+        {user.location?.address ? (
+          <p className="text-gray-600 mt-1">
+            📍 {user.location.address}
+          </p>
+        ) : (
+          <p className="text-gray-800 mt-1">No location set</p>
+        )}
+
+        {user.location?.latitude && user.location?.longitude && (
+          <a
+            href={`https://www.google.com/maps?q=${user.location.latitude},${user.location.longitude}`}
+            target="_blank"
+            rel="noopener noreferrer"
+            className="text-blue-600 underline mt-1"
+          >
+            View on Map
+          </a>
+        )}
       </div>
 
       {/* Analytics Block */}
