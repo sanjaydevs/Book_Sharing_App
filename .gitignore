@@ -4,6 +4,7 @@ server/node_modules/
 
 # Ignore environment files
 *.env
+.env*
 
 # macOS
 .DS_Store.env*

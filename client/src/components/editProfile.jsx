@@ -1,5 +1,5 @@
 import { useState } from "react";
-import LocationPicker from "./LocationPicker";
+import LocationPicker from "./locationPicker"
 import toast from "react-hot-toast";
 
 const baseURL = import.meta.env.VITE_API_BASE_URL;
