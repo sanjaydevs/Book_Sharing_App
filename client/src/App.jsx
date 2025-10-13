@@ -12,6 +12,7 @@ import Footer from "./components/footer";
 import OauthSuccess from "./pages/oauthSuccess";
 import UserProfile from "./pages/userProfile";
 import EditProfile from "./components/editProfile";
+import "leaflet/dist/leaflet.css";
 
 import { Toaster } from "react-hot-toast";
 

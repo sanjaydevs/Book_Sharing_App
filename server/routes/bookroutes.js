@@ -10,12 +10,12 @@ router.get("/:id/profile", async (req, res) => {
   if (Number.isNaN(userId)) return res.status(400).json({ error: "Invalid user id" });
 
   try {
-    // 1) user basic info
+    // 1) user basic info including location
     const userRes = await pool.query(
       `SELECT id, name, email, created_at,
-              location_name, latitude, longitude, address, place_id
-      FROM users
-      WHERE id = $1`,
+              location_name, latitude, longitude, address
+       FROM users
+       WHERE id = $1`,
       [userId]
     );
 
@@ -31,7 +31,7 @@ router.get("/:id/profile", async (req, res) => {
       [userId]
     );
 
-    // 3) counts / stats (use ::int to return integer)
+    // 3) counts / stats
     const booksListedPromise = pool.query(
       `SELECT COUNT(*)::int AS count FROM books WHERE owner_id = $1`,
       [userId]
@@ -96,11 +96,10 @@ router.get("/:id/profile", async (req, res) => {
       email: user.email,
       created_at: user.created_at,
       location: {
-        location_name: user.location_name,
-        latitude: user.latitude,
-        longitude: user.longitude,
-        address: user.address,
-        place_id: user.place_id,
+        location_name: user.location_name || null,
+        latitude: user.latitude || null,
+        longitude: user.longitude || null,
+        address: user.address || null,
       },
       books: booksRes.rows,
       stats: {
@@ -118,6 +117,7 @@ router.get("/:id/profile", async (req, res) => {
     return res.status(500).json({ error: "Server error" });
   }
 });
+
 
 
 

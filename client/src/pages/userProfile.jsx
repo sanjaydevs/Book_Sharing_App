@@ -3,6 +3,18 @@ import React, { useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
 import { ClipLoader } from "react-spinners";
 import { Link } from "react-router-dom";
+import { MapContainer, TileLayer, Marker} from "react-leaflet";
+
+import L from "leaflet";
+
+const markerIcon = L.icon({
+  iconUrl: "https://unpkg.com/leaflet@1.9.4/dist/images/marker-icon.png",
+  iconSize: [25, 41],
+  iconAnchor: [12, 41],
+  popupAnchor: [1, -34],
+  shadowUrl: "https://unpkg.com/leaflet@1.9.4/dist/images/marker-shadow.png",
+  shadowSize: [41, 41],
+});
 
 const baseURL = import.meta.env.VITE_API_BASE_URL;
 
@@ -150,6 +162,28 @@ const UserProfile = () => {
             View on Map
           </a>
         )}
+
+        {user.location?.latitude && user.location?.longitude && (
+          <div className="w-full h-48 mt-2 rounded-lg overflow-hidden shadow-md">
+            <MapContainer
+              center={[user.location.latitude, user.location.longitude]}
+              zoom={13}
+              style={{ height: "100%", width: "100%" }}
+              scrollWheelZoom={false}
+            >
+              <TileLayer
+                attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OSM</a>'
+                url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
+              />
+              <Marker
+                position={[user.location.latitude, user.location.longitude]}
+                icon={markerIcon}
+              />
+            </MapContainer>
+          </div>
+        )}
+
+        
       </div>
 
       {/* Analytics Block */}
@@ -215,8 +249,9 @@ const UserProfile = () => {
         <div className="mt-6">
           <Link to={`/${user.id}/edit`}>
             <button className="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700">
-              Edit Profile
+              {user.location?.latitude ? "Edit Location" : "Add Location"}
             </button>
+
           </Link>
         </div>
       )}

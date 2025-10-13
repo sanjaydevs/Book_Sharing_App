@@ -176,59 +176,21 @@ router.get("/google/callback", async (req, res) => {
     }
 });
 
-router.put("/:id/location", verifyToken, async (req, res) => {
-  const { id } = req.params;
-  const { lat, lng, address, place_id } = req.body;
-
-  if (!lat || !lng || !address) {
-    return res.status(400).json({ error: "lat, lng, and address are required" });
-  }
-
+router.put("/update-location",verifyToken, async (req, res) => {
   try {
-    const result = await pool.query(
-      `UPDATE users 
-       SET latitude = $1, longitude = $2, address = $3, place_id = $4
-       WHERE id = $5 RETURNING id, name, email, latitude, longitude, address, place_id`,
-      [lat, lng, address, place_id, id]
-    );
+    const userId = req.user.userId; // use your auth middleware
+    console.log(req.body);
+    console.log("user",userId);
+    const { latitude, longitude, address } = req.body;
 
-    if (result.rows.length === 0) {
-      return res.status(404).json({ error: "User not found" });
-    }
-
-    res.json(result.rows[0]);
-  } catch (err) {
-    console.error("Error updating user location:", err);
-    res.status(500).json({ error: "Internal server error" });
-  }
-});
-
-router.put("/me/location", authMiddleware, async (req, res) => {
-  try {
-    const userId = req.user.id; // from JWT
-    const { location_name, latitude, longitude, address, place_id } = req.body;
-
-    if (!latitude || !longitude) {
-      return res.status(400).json({ error: "Latitude and longitude required" });
-    }
-
-    const result = await pool.query(
+    await pool.query(
       `UPDATE users
-       SET location_name = $1,
-           latitude = $2,
-           longitude = $3,
-           address = $4,
-           place_id = $5
-       WHERE id = $6
-       RETURNING id, name, email, location_name, latitude, longitude, address, place_id`,
-      [location_name || null, latitude, longitude, address || null, place_id || null, userId]
+       SET latitude = $1, longitude = $2, address = $3
+       WHERE id = $4`,
+      [latitude, longitude, address, userId]
     );
 
-    if (result.rows.length === 0) {
-      return res.status(404).json({ error: "User not found" });
-    }
-
-    res.json(result.rows[0]);
+    res.json({ message: "Location updated successfully" });
   } catch (err) {
     console.error("Error updating location:", err);
     res.status(500).json({ error: "Server error" });

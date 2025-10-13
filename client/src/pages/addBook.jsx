@@ -1,6 +1,7 @@
 import React, {useState} from "react";
 import axios from "axios";
 import toast from "react-hot-toast";
+const baseURL = import.meta.env.VITE_API_BASE_URL;
 
 import {Filter} from 'bad-words';
 

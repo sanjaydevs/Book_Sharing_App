@@ -1,66 +1,55 @@
-import React, { useState } from "react";
-import { useParams } from "react-router-dom";
-import { LoadScript, Autocomplete } from "@react-google-maps/api";
+import { useState } from "react";
+import LocationPicker from "./LocationPicker";
+import toast from "react-hot-toast";
 
 const baseURL = import.meta.env.VITE_API_BASE_URL;
 
-const EditProfile = () => {
-  const { userId } = useParams();
-  const [autocomplete, setAutocomplete] = useState(null);
+export default function EditProfile() {
+  const [selectedLocation, setSelectedLocation] = useState(null);
   const [address, setAddress] = useState("");
-  const [coords, setCoords] = useState(null);
 
-  const onLoad = (autoC) => setAutocomplete(autoC);
+  const handleSave = async () => {
+    if (!selectedLocation) return alert("Please select a location");
 
-  const onPlaceChanged = () => {
-    if (autocomplete) {
-      const place = autocomplete.getPlace();
-      if (place.geometry) {
-        setCoords({
-          lat: place.geometry.location.lat(),
-          lng: place.geometry.location.lng(),
-          place_id: place.place_id,
-        });
-        setAddress(place.formatted_address);
-      }
+    const token = localStorage.getItem("token");
+    const res = await fetch(`${baseURL}/api/auth/update-location`, {
+      method: "PUT",
+      headers: { 
+        "Content-Type": "application/json", 
+        Authorization: `Bearer ${token}` 
+      },
+      body: JSON.stringify({
+        latitude: selectedLocation.lat,
+        longitude: selectedLocation.lng,
+        address,
+      }),
+    });
+
+    const data = await res.json();
+    if (res.ok) {
+      toast.success("Location Updated", { duration: 3000 });
+    } else {
+      toast.Error("Error adding location", { duration: 3000 });
     }
   };
 
-  const handleSave = async () => {
-    if (!coords || !address) return;
-
-    const token = localStorage.getItem("token");
-    await fetch(`${baseURL}/api/users/${userId}/location`, {
-      method: "PUT",
-      headers: {
-        "Content-Type": "application/json",
-        Authorization: `Bearer ${token}`,
-      },
-      body: JSON.stringify({ ...coords, address }),
-    });
-    alert("Location updated!");
-  };
-
   return (
-    <div className="p-6">
-      <LoadScript googleMapsApiKey={import.meta.env.VITE_GOOGLE_MAPS_API_KEY} libraries={["places"]}>
-        <Autocomplete onLoad={onLoad} onPlaceChanged={onPlaceChanged}>
-          <input
-            type="text"
-            placeholder="Enter your location"
-            className="w-full p-2 border rounded"
-          />
-        </Autocomplete>
-      </LoadScript>
+    <div className="p-6 flex flex-col gap-4">
+      <h2 className="text-xl font-bold mb-2">Select Your Location</h2>
+      <LocationPicker onLocationSelect={setSelectedLocation} />
+      <input
+        type="text"
+        placeholder="Optional location name / address"
+        value={address}
+        onChange={(e) => setAddress(e.target.value)}
+        className="w-full p-2 border rounded"
+      />
       <button
         onClick={handleSave}
-        className="mt-4 px-4 py-2 bg-blue-600 text-white rounded"
+        className="bg-green-600 text-white px-4 py-2 rounded-md shadow-md hover:bg-green-700"
       >
         Save Location
       </button>
-      {address && <p className="mt-2 text-gray-600">Selected: {address}</p>}
     </div>
   );
-};
-
-export default EditProfile;
+}

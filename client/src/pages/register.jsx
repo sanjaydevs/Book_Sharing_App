@@ -29,10 +29,10 @@ export default function Login() {
             return;
         }
 
-        if (!form.email.endsWith("@nitc.ac.in")) {
-            toast.success("Only NITC mails are expected", { duration: 3000 });
-            return res.status(403).json({ message: "Only NITC emails are allowed" }); 
-        }
+        // if (!form.email.endsWith("@nitc.ac.in")) {
+        //     toast.success("Only NITC mails are expected", { duration: 3000 });
+        //     return res.status(403).json({ message: "Only NITC emails are allowed" }); 
+        // }
 
 
         try {
@@ -86,7 +86,7 @@ export default function Login() {
                             name="email"
                             type="email"
                             onChange={handleChange}
-                            placeholder="Enter your NITC email id" 
+                            placeholder="Enter you Email id" 
                             className="font-heading bg-transparent border-0 w-full outline-none text-sm md:text-base text-white"></input>
                         </div>
 
