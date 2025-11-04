@@ -18,6 +18,7 @@ export default function Browse () {
   const [author, setAuthor] = useState("");
   const [available, setAvailable] = useState(""); // "true", "false", or ""
   const [genre, setGenre] = useState("");
+  const [radius, setRadius] = useState("");
   
 
   useEffect(()=>{
@@ -79,6 +80,7 @@ export default function Browse () {
           author: author || undefined,
           available: available || undefined,
           genre: genre || undefined,
+          radius: 10,
         }
     });
 
@@ -145,6 +147,13 @@ export default function Browse () {
     placeholder="Search by author..."
     value={author}
     onChange={(e) => setAuthor(e.target.value)}
+    className="border border-black px-3 py-2 rounded-lg drop-shadow-[2px_2px_0_#000000]"
+  />
+  <input
+    type="text"
+    placeholder="Filter by distance of Owner"
+    value={author}
+    onChange={(e) => setRadius(e.target.value)}
     className="border border-black px-3 py-2 rounded-lg drop-shadow-[2px_2px_0_#000000]"
   />
   <select

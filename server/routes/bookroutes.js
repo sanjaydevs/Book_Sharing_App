@@ -122,12 +122,19 @@ router.get("/:id/profile", async (req, res) => {
 
 
 router.get("/search", async (req, res) => {
-    const { title, author, genre, location, available } = req.query;
+    const { title, author, genre, location, available,lat,lng,radius } = req.query;
 
 
     try{
         let query=`SELECT books.id, books.title, books.author, books.image, books.available,
-            users.name AS owner_name, users.email AS owner_email
+            users.name AS owner_name, users.email AS owner_email, users.latitude, users.longitude, 
+
+            (
+            6731 * acos(cos(radians($1)) * cos(radians(user.latitude)) * 
+            cos(radians(user.longiude) - cos(radians($2)) + 
+            sin(radians($1)) * sin(radians(users.latitude))
+            )
+            ) AS distance
             FROM books
             JOIN users ON books.owner_id = users.id
             WHERE 1=1`;
@@ -158,6 +165,13 @@ router.get("/search", async (req, res) => {
             values.push(available === "true"); // convert string to boolean
             count++;
         }   
+
+        if (lat && lng && radius) {
+          query+= 'HAVING distance <= $${count}';
+          values.push(radius);
+        }
+
+        query += 'ORDER BY distance ASC' ;
 
         const result=await pool.query(query,values);
         res.json({books:result.rows});

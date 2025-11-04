@@ -121,6 +121,8 @@ router.get("/google", (req, res) => {
 
   res.redirect(url);
 });
+
+
 router.get("/google/callback", async (req, res) => {
     const code = req.query.code;
 
@@ -147,11 +149,11 @@ router.get("/google/callback", async (req, res) => {
     const payload = ticket.getPayload();
     const { email, name } = payload;
 
-    if (!email.endsWith("@nitc.ac.in")) {
-        return res.redirect(
-        `${process.env.FRONTEND_URL}/login?error=Only%20NITC%20emails%20are%20allowed`
-    );
-    }   
+    // if (!email.endsWith("@nitc.ac.in")) {
+    //     return res.redirect(
+    //     `${process.env.FRONTEND_URL}/login?error=Only%20NITC%20emails%20are%20allowed`
+    // );
+    // }   
 
     // Check DB for user
     let userResult = await pool.query("SELECT * FROM users WHERE email = $1", [email]);
