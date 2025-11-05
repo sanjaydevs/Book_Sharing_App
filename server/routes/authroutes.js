@@ -104,6 +104,26 @@ router.post("/login", async (req,res)=>{
     }
 });
 
+
+router.get("/userLocation", verifyToken, async (req,res)=>{
+    try{
+        const result= await pool.query("Select latitude AS lat, longitude AS lng FROM users WHERE id = $1" , [req.user.userId]);
+
+        if (result.rowCount === 0 || !result.rows[0].lat) {
+            return res.status(404).json({ error: "Location not found" });
+        }
+
+        const userLocation = result.rows[0];
+
+        res.json({userLocation});
+        
+    } catch (err) {
+        res.status(500).json({error: "Server error"})
+    }
+    
+
+});
+
 router.get("/me",verifyToken, async (req,res)=>{
     try{
         const userResult = await pool.query("SELECT id,name,email FROM users WHERE id = $1",[req.user.userId]);

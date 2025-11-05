@@ -124,23 +124,24 @@ router.get("/:id/profile", async (req, res) => {
 router.get("/search", async (req, res) => {
     const { title, author, genre, location, available,lat,lng,radius } = req.query;
 
-
+    console.log(lat,lng);
     try{
         let query=`SELECT books.id, books.title, books.author, books.image, books.available,
             users.name AS owner_name, users.email AS owner_email, users.latitude, users.longitude, 
 
             (
-            6731 * acos(cos(radians($1)) * cos(radians(user.latitude)) * 
-            cos(radians(user.longiude) - cos(radians($2)) + 
-            sin(radians($1)) * sin(radians(users.latitude))
-            )
+            6731 * acos(
+                cos(radians($1)) * cos(radians(users.latitude)) * 
+                cos(radians(users.longitude) - radians($2)) + 
+                sin(radians($1)) * sin(radians(users.latitude))
+              )
             ) AS distance
             FROM books
             JOIN users ON books.owner_id = users.id
             WHERE 1=1`;
 
-        const values=[]
-        let count=1
+        const values=[lat || 0, lng || 0];
+        let count=3;
 
         if(title){
             query+=` AND books.title ILIKE $${count}`; // $count give the number 1,2,3... $${count} gives $1,$2,$3....
@@ -166,25 +167,33 @@ router.get("/search", async (req, res) => {
             count++;
         }   
 
-        if (lat && lng && radius) {
-          query+= 'HAVING distance <= $${count}';
+        if (radius) {
+          query += ` AND (
+            6371 * acos(
+              cos(radians($1)) * cos(radians(users.latitude)) * 
+              cos(radians(users.longitude) - radians($2)) + 
+              sin(radians($1)) * sin(radians(users.latitude))
+            )
+          ) <= $${count}`;
           values.push(radius);
+          count++;
+        }if (radius) {
+          query += ` AND (
+            6371 * acos(
+              cos(radians($1)) * cos(radians(users.latitude)) * 
+              cos(radians(users.longitude) - radians($2)) + 
+              sin(radians($1)) * sin(radians(users.latitude))
+            )
+          ) <= $${count}`;
+          values.push(radius);
+          count++;
         }
 
-        query += 'ORDER BY distance ASC' ;
+        query += ` ORDER BY distance ASC` ;
 
         const result=await pool.query(query,values);
         res.json({books:result.rows});
 
-
-    // if (!title) {
-    //     return res.status(400).json({ error: "Search query is required" });
-    // }
-
-    // try {
-    //     const result = await pool.query("Select books.id, books.title, books.author,books.image, users.name AS owner_name, users.email AS owner_email FROM books JOIN users ON books.owner_id = users.id WHERE books.title ILIKE $1", [`%${title}%`]);
-
-    //     res.json(result.rows);
     } catch (err) {
         console.error("Search error:", err.message);
         res.status(500).json({ error: "Server Error" });

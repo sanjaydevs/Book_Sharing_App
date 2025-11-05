@@ -25,6 +25,9 @@ const UserProfile = () => {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
   const [notFound, setNotFound] = useState(false);
+  const [reviews, setReviews] = useState([]);
+  const [writtenReviews, setWrittenReviews] = useState([]);
+  const [average, setAverage] = useState({ average_rating: null, total_reviews: 0 });
 
   useEffect(() => {
     setLoading(true);
@@ -44,6 +47,35 @@ const UserProfile = () => {
     const controller = new AbortController();
 
     
+    const fetchReviews = async () => {
+        try {
+        const res = await fetch(`${baseURL}/api/reviews/${userId}`);
+        const data = await res.json();
+        setReviews(data || []);
+      } catch (err) {
+        console.error("Error fetching reviews:", err);
+      }
+    };
+
+    const fetchWrittenReviews = async () => {
+      try {
+        const res = await fetch(`${baseURL}/api/reviews/written/${userId}`);
+        const data = await res.json();
+        setWrittenReviews(data || []);
+      } catch (err) {
+        console.error("Error fetching written reviews:", err);
+      }
+    };
+
+    const fetchAverage = async () => {
+      try {
+        const res = await fetch(`${baseURL}/api/reviews/average/${userId}`);
+        const data = await res.json();
+        setAverage(data || { average_rating: null, total_reviews: 0 });
+      } catch (err) {
+        console.error("Error fetching average rating:", err);
+      }
+    };  
 
     const fetchUser = async () => {
       setError(null);
@@ -96,7 +128,7 @@ const UserProfile = () => {
 
     
     
-  Promise.all([fetchUser(), fetchCurrentUser()])
+  Promise.all([fetchUser(), fetchCurrentUser(), fetchReviews(), fetchAverage(), fetchWrittenReviews()])
   .catch(err => console.error("Error in fetching data:", err))
   .finally(() => setLoading(false));
     
@@ -243,6 +275,70 @@ const UserProfile = () => {
           <p className="text-gray-500">No exchange history yet</p>
         )}
       </div>
+
+      {/* Reviews & Trust Section */}
+      <div className="bg-[#93D3AE] border-2 border-black shadow-[6px_6px_0_#000000] w-full max-w-3xl rounded-2xl p-6 mt-6">
+        <h2 className="text-xl font-bold mb-4">Reviews & Ratings</h2>
+
+        {/* Average Rating */}
+        {average.average_rating ? (
+          <div className="mb-4 text-center">
+            <p className="text-2xl font-bold text-yellow-600">
+              ⭐ {average.average_rating} / 5
+            </p>
+            <p className="text-gray-600 text-sm">
+              ({average.total_reviews} review{average.total_reviews !== 1 && "s"})
+            </p>
+          </div>
+        ) : (
+          <p className="text-gray-600 text-center mb-4">No reviews yet</p>
+        )}
+
+        {/* List of Reviews */}
+        {reviews.length > 0 ? (
+          <div className="space-y-4">
+            {reviews.map((r) => (
+              <div key={r.id} className="bg-white border rounded-xl p-4 shadow">
+                <div className="flex items-center gap-3 mb-2">
+                  <img
+                    src={r.reviewer_image || "https://via.placeholder.com/40"}
+                    alt={r.reviewer_name}
+                    className="w-8 h-8 rounded-full border"
+                  />
+                  <p className="font-semibold">{r.reviewer_name}</p>
+                </div>
+                <p className="text-yellow-600 mb-1">⭐ {r.rating}</p>
+                <p className="text-gray-700 text-sm">{r.comment}</p>
+                <p className="text-xs text-gray-500 mt-2">
+                  {new Date(r.created_at).toLocaleDateString()}
+                </p>
+              </div>
+            ))}
+          </div>
+        ) : (
+          average.total_reviews > 0 && <p className="text-gray-500 text-center">No detailed reviews.</p>
+        )}
+      </div>
+
+      {currentUserId === user.id && writtenReviews.length > 0 && (
+        <div className="bg-[#93D3AE] border-2 border-black shadow-[6px_6px_0_#000000] w-full max-w-3xl rounded-2xl p-6 mt-6">
+          <h2 className="text-xl font-bold mb-4">My Written Reviews</h2>
+          <div className="space-y-4">
+            {writtenReviews.map((r) => (
+              <div key={r.id} className="bg-white border rounded-xl p-4 shadow">
+                <div className="flex items-center gap-3 mb-2">
+                  <p className="font-semibold text-blue-700">To: {r.reviewed_user_name}</p>
+                </div>
+                <p className="text-yellow-600 mb-1">⭐ {r.rating}</p>
+                <p className="text-gray-700 text-sm">{r.comment}</p>
+                <p className="text-xs text-gray-500 mt-2">
+                  {new Date(r.created_at).toLocaleDateString()}
+                </p>
+              </div>
+            ))}
+          </div>
+        </div>
+      )}
 
       {/* Edit / Settings */}
       {currentUserId === user.id && (

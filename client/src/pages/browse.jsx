@@ -19,6 +19,8 @@ export default function Browse () {
   const [available, setAvailable] = useState(""); // "true", "false", or ""
   const [genre, setGenre] = useState("");
   const [radius, setRadius] = useState("");
+  const [lat,setLat]=useState("");
+  const [lng,setLng]=useState("");
   
 
   useEffect(()=>{
@@ -30,6 +32,26 @@ export default function Browse () {
       return;
     }
 
+    const fetchUserLocation = async ()=>{
+      try{
+        console.log("fetching location");
+        const res = await axios.get(`${baseURL}/api/auth/userLocation`, {
+          headers:{
+            Authorization:`Bearer ${token}`
+          },
+        });
+
+        setLat(res.data.userLocation.lat);
+        setLng(res.data.userLocation.lng);
+
+    } catch(err){
+        console.error("Error fetching user location:", err);
+    }
+  }
+
+    fetchUserLocation();
+
+
     const fetchBooks = async ()=>{
       try{
 
@@ -39,6 +61,7 @@ export default function Browse () {
           },
         });
         setBooks(res.data.books);
+
       } catch(err){
         console.error("Error fetching books:", err);
         if (err.response && err.response.status === 403) {
@@ -81,6 +104,8 @@ export default function Browse () {
           available: available || undefined,
           genre: genre || undefined,
           radius: 10,
+          lat: lat || undefined,
+          lng : lng || undefined,
         }
     });
 
@@ -152,7 +177,7 @@ export default function Browse () {
   <input
     type="text"
     placeholder="Filter by distance of Owner"
-    value={author}
+    value={radius}
     onChange={(e) => setRadius(e.target.value)}
     className="border border-black px-3 py-2 rounded-lg drop-shadow-[2px_2px_0_#000000]"
   />

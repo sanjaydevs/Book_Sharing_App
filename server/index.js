@@ -7,6 +7,7 @@ import authRoutes from "./routes/authroutes.js";
 import bookRoutes from "./routes/bookroutes.js";
 import requestRoutes from "./routes/requestroutes.js";
 import messages from "./routes/messages.js";
+import reviewsRouter from "./routes/reviews.js";
 
 dotenv.config();
 
@@ -23,6 +24,7 @@ app.use("/api/auth", authRoutes);
 app.use("/api/books", bookRoutes);
 app.use("/api/requests", requestRoutes);
 app.use("/api/messages", messages);
+app.use("/api/reviews", reviewsRouter);
 
 
 const PORT = process.env.PORT || 5000;

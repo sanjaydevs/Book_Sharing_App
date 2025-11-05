@@ -18,6 +18,11 @@
     const [requests,setRequests] = useState([]);
     const [incomingRequests, setIncomingRequests]=useState([]);
 
+    const [showReviewModal, setShowReviewModal] = useState(false);
+    const [reviewTarget, setReviewTarget] = useState(null);
+    const [rating, setRating] = useState(0);
+    const [comment, setComment] = useState("");
+
 
     const token = localStorage.getItem("token");
     let userId = null;
@@ -67,27 +72,39 @@
 
 
     const handleReturnConfirm = async (requestId) => {
-        try {
-          console.log("handlereturn");
+      try {
+        const token = localStorage.getItem("token");
+        await axios.post(
+          `${baseURL}/api/requests/${requestId}/return`,
+          null,
+          { headers: { Authorization: `Bearer ${token}` } }
+        );
 
-          const token = localStorage.getItem("token");
-          await axios.post(
-            `${baseURL}/api/requests/${requestId}/return`,
-            null,
-            { headers: { Authorization: `Bearer ${token}` } }
-          );
-          
-          setTimeout(() => {
-            toast.success("Return Confirmed From your side", { duration: 3000 });
-            resetReqs(); // don’t await, just fire after alert
-          }, 100);
+        toast.success("Return Confirmed From your side", { duration: 3000 });
 
-          await resetReqs();
+        // Find request BEFORE resetting
+        const req = [...requests, ...incomingRequests].find((r) => r.id === requestId);
 
-        } catch (err) {
-          console.error("Error confirming return:", err);
+        if (req) {
+          const targetId =
+            parseInt(userId) === req.sender_id ? req.receiver_id : req.sender_id;
+          console.log("Setting review target:", targetId);
+
+          // ✅ Set review modal BEFORE refreshing
+          setReviewTarget({ requestId, targetId });
+          setShowReviewModal(true);
         }
-      };    
+
+        // ✅ Refresh *after* small delay to let modal open cleanly
+        setTimeout(() => {
+          resetReqs();
+        }, 2000);
+
+      } catch (err) {
+        console.error("Error confirming return:", err);
+        toast.error("Failed to confirm return");
+      }
+    };
 
     const handleAccept = async (reqId)=>{
       try{
@@ -374,6 +391,78 @@
     </div>
 
         </div>
+
+        {showReviewModal && (
+          <div className="fixed inset-0 bg-black bg-opacity-50 flex justify-center items-center z-50">
+            <div className="bg-white rounded-lg shadow-lg p-6 w-[90%] max-w-md border-2 border-black">
+              <h2 className="font-title text-xl mb-4 text-center">Leave a Review</h2>
+
+              <div className="flex justify-center gap-2 mb-4">
+                {[1, 2, 3, 4, 5].map((star) => (
+                  <button
+                    key={star}
+                    onClick={() => setRating(star)}
+                    className={star <= rating ? "text-yellow-400 text-2xl" : "text-gray-400 text-2xl"}
+                  >
+                    ★
+                  </button>
+                ))}
+              </div>
+
+              <textarea
+                value={comment}
+                onChange={(e) => setComment(e.target.value)}
+                placeholder="Rate your Exchange experience"
+                className="w-full border border-gray-300 rounded p-2 mb-4"
+                rows={3}
+              />
+
+              <div className="flex justify-between">
+                <button
+                  onClick={() => setShowReviewModal(false)}
+                  className="px-4 py-1 border-2 border-black rounded bg-gray-300 hover:bg-gray-400"
+                >
+                  Cancel
+                </button>
+                <button
+                  onClick={async () => {
+                    try {
+                      console.log("trying to post review");
+                      
+                      if (!reviewTarget?.targetId) {
+                          toast.error("Review target missing");
+                          return;
+                        }
+
+                      
+                      await axios.post(
+                        `${baseURL}/api/reviews`,
+                        {
+                          reviewer_id: userId,
+                          reviewed_user_id: reviewTarget.targetId,
+                          request_id: reviewTarget.requestId,
+                          rating,
+                          comment,
+                        },
+                        { headers: { Authorization: `Bearer ${token}` } }
+                      );
+                      toast.success("Review submitted!");
+                      setShowReviewModal(false);
+                      setComment("");
+                      setRating(0);
+                    } catch (err) {
+                      console.error("Error submitting review:", err);
+                      toast.error("Failed to submit review");
+                    }
+                  }}
+                  className="px-4 py-1 border-2 border-black rounded bg-blue-500 text-white hover:bg-blue-600"
+                >
+                  Submit
+                </button>
+              </div>
+            </div>
+          </div>
+        )}
       </div>
 
     )
