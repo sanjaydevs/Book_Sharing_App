@@ -28,6 +28,7 @@ const UserProfile = () => {
   const [reviews, setReviews] = useState([]);
   const [writtenReviews, setWrittenReviews] = useState([]);
   const [average, setAverage] = useState({ average_rating: null, total_reviews: 0 });
+  const [activeTab, setActiveTab] = useState("received"); // "received" | "written"
 
   useEffect(() => {
     setLoading(true);
@@ -276,69 +277,110 @@ const UserProfile = () => {
         )}
       </div>
 
+      
+
       {/* Reviews & Trust Section */}
-      <div className="bg-[#93D3AE] border-2 border-black shadow-[6px_6px_0_#000000] w-full max-w-3xl rounded-2xl p-6 mt-6">
-        <h2 className="text-xl font-bold mb-4">Reviews & Ratings</h2>
+<div className="w-full max-w-3xl mt-6">
+  {/* Tab Switcher */}
+  <div className="flex justify-center mb-4">
+    <button
+      onClick={() => setActiveTab("received")}
+      className={`px-4 py-2 border border-black rounded-l-xl font-semibold transition-all duration-200 ${
+        activeTab === "received"
+          ? "bg-[#93D3AE] text-black shadow-[3px_3px_0_#000000]"
+          : "bg-white text-gray-600 hover:bg-gray-100"
+      }`}
+    >
+      Received ⭐
+    </button>
+    {currentUserId === user.id && (
+      <button
+        onClick={() => setActiveTab("written")}
+        className={`px-4 py-2 border border-black rounded-r-xl font-semibold transition-all duration-200 ${
+          activeTab === "written"
+            ? "bg-[#93D3AE] text-black shadow-[3px_3px_0_#000000]"
+            : "bg-white text-gray-600 hover:bg-gray-100"
+        }`}
+      >
+        Written ✍️
+      </button>
+    )}
+  </div>
 
-        {/* Average Rating */}
-        {average.average_rating ? (
-          <div className="mb-4 text-center">
-            <p className="text-2xl font-bold text-yellow-600">
-              ⭐ {average.average_rating} / 5
-            </p>
-            <p className="text-gray-600 text-sm">
-              ({average.total_reviews} review{average.total_reviews !== 1 && "s"})
-            </p>
-          </div>
-        ) : (
-          <p className="text-gray-600 text-center mb-4">No reviews yet</p>
-        )}
+  {/* Average rating (only for received) */}
+  {activeTab === "received" && (
+    <div className="bg-[#93D3AE] border-2 border-black shadow-[6px_6px_0_#000000] w-full rounded-2xl p-6">
+      <h2 className="text-xl font-bold mb-4">Reviews & Ratings</h2>
 
-        {/* List of Reviews */}
-        {reviews.length > 0 ? (
-          <div className="space-y-4">
-            {reviews.map((r) => (
-              <div key={r.id} className="bg-white border rounded-xl p-4 shadow">
-                <div className="flex items-center gap-3 mb-2">
-                  <img
-                    src={r.reviewer_image || "https://via.placeholder.com/40"}
-                    alt={r.reviewer_name}
-                    className="w-8 h-8 rounded-full border"
-                  />
-                  <p className="font-semibold">{r.reviewer_name}</p>
-                </div>
-                <p className="text-yellow-600 mb-1">⭐ {r.rating}</p>
-                <p className="text-gray-700 text-sm">{r.comment}</p>
-                <p className="text-xs text-gray-500 mt-2">
-                  {new Date(r.created_at).toLocaleDateString()}
-                </p>
-              </div>
-            ))}
-          </div>
-        ) : (
-          average.total_reviews > 0 && <p className="text-gray-500 text-center">No detailed reviews.</p>
-        )}
-      </div>
-
-      {currentUserId === user.id && writtenReviews.length > 0 && (
-        <div className="bg-[#93D3AE] border-2 border-black shadow-[6px_6px_0_#000000] w-full max-w-3xl rounded-2xl p-6 mt-6">
-          <h2 className="text-xl font-bold mb-4">My Written Reviews</h2>
-          <div className="space-y-4">
-            {writtenReviews.map((r) => (
-              <div key={r.id} className="bg-white border rounded-xl p-4 shadow">
-                <div className="flex items-center gap-3 mb-2">
-                  <p className="font-semibold text-blue-700">To: {r.reviewed_user_name}</p>
-                </div>
-                <p className="text-yellow-600 mb-1">⭐ {r.rating}</p>
-                <p className="text-gray-700 text-sm">{r.comment}</p>
-                <p className="text-xs text-gray-500 mt-2">
-                  {new Date(r.created_at).toLocaleDateString()}
-                </p>
-              </div>
-            ))}
-          </div>
+      {average.average_rating ? (
+        <div className="mb-4 text-center">
+          <p className="text-2xl font-bold text-yellow-600">
+            ⭐ {average.average_rating} / 5
+          </p>
+          <p className="text-gray-600 text-sm">
+            ({average.total_reviews} review{average.total_reviews !== 1 && "s"})
+          </p>
         </div>
+      ) : (
+        <p className="text-gray-600 text-center mb-4">No reviews yet</p>
       )}
+
+      {reviews.length > 0 ? (
+        <div className="space-y-4">
+          {reviews.map((r) => (
+            <div key={r.id} className="bg-white border rounded-xl p-4 shadow">
+              <div className="flex items-center gap-3 mb-2">
+                <p className="font-semibold text-blue-700">
+                  From: {r.reviewer_name}
+                </p>
+              </div>
+              <p className="text-yellow-600 mb-1">⭐ {r.rating}</p>
+              <p className="text-gray-700 text-sm">{r.comment}</p>
+              <p className="text-xs text-gray-500 mt-2">
+                {new Date(r.created_at).toLocaleDateString()}
+              </p>
+            </div>
+          ))}
+        </div>
+      ) : (
+        <p className="text-sm text-gray-600 italic text-center">
+          No reviews received yet.
+        </p>
+      )}
+    </div>
+  )}
+
+  {/* Written Reviews */}
+  {activeTab === "written" && currentUserId === user.id && (
+    <div className="bg-[#93D3AE] border-2 border-black shadow-[6px_6px_0_#000000] w-full rounded-2xl p-6">
+      <h2 className="text-xl font-bold mb-4">My Written Reviews</h2>
+
+      {writtenReviews.length > 0 ? (
+        <div className="space-y-4">
+          {writtenReviews.map((r) => (
+            <div key={r.id} className="bg-white border rounded-xl p-4 shadow">
+              <div className="flex items-center gap-3 mb-2">
+                <p className="font-semibold text-blue-700">
+                  To: {r.reviewed_user_name}
+                </p>
+              </div>
+              <p className="text-yellow-600 mb-1">⭐ {r.rating}</p>
+              <p className="text-gray-700 text-sm">{r.comment}</p>
+              <p className="text-xs text-gray-500 mt-2">
+                {new Date(r.created_at).toLocaleDateString()}
+              </p>
+            </div>
+          ))}
+        </div>
+      ) : (
+        <p className="text-sm text-gray-600 italic text-center">
+          You haven’t written any reviews yet.
+        </p>
+      )}
+    </div>
+  )}
+</div>
+
 
       {/* Edit / Settings */}
       {currentUserId === user.id && (
